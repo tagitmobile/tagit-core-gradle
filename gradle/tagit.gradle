@@ -1,7 +1,7 @@
 apply plugin: "eclipse"
 apply plugin: "project-report"
 
-apply from: "${rootDir}/gradle/spotless/style.gradle"
+apply from: "https://github.com/tagitmobile/tagit-core-gradle/blob/main/gradle/spotless/style.gradle"
 
 sonarqube {
 	properties {
