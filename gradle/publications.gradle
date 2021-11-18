@@ -1,0 +1,36 @@
+apply plugin: "maven-publish"
+
+publishing {
+	publications {
+        mavenJava(MavenPublication) {
+            from components.java
+     		artifact sourcesJar
+			artifact javadocJar
+        }
+    }
+    repositories {
+        maven {
+        	// [rj.added 2020.06.04] local nexus repository for offline work
+        	if (null != System.properties['local']) {
+	            def releasesRepoUrl = "http://localhost:8081/repository/maven-releases/"
+	            def snapshotsRepoUrl = "http://localhost:8081/repository/maven-snapshots/"
+	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+	            credentials {
+	                username 'gradle'
+	                password 'Tagit123'
+	            }
+	            allowInsecureProtocol = true
+	            println "Publishing to local repository $url as $rootProject.name:$version"
+        	} else {
+	            def releasesRepoUrl = "https://nexus.tagitmobile.com/repository/maven-releases/"
+	            def snapshotsRepoUrl = "https://nexus.tagitmobile.com/repository/maven-snapshots/"
+	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+	            credentials {
+	                username 'gradle'
+	                password 'Tagit123'
+	            }
+	        }
+        }
+    }
+}
+

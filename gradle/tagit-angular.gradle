@@ -1,0 +1,108 @@
+apply plugin: 'war'
+apply plugin: 'com.github.node-gradle.node'
+
+def getDate() {
+    return new Date().format('yyyyMMddHHmmss')
+}
+
+// declare a dedicated scope for publishing the packaged JAR
+configurations {
+	npmResources
+//	providedRuntime
+//	compile.exclude module: 'spring-boot-starter-json' // to replace with gson // [rj.added 2018.12.04] removing causes problems with io.springfox and spring-boot-starter-actuator: Error creating bean with name 'objectMapperConfigurer'
+}
+configurations.default.extendsFrom(configurations.npmResources)
+
+// node for angular [rj.added 2020.01.07]
+node {
+	// Version of node to use.
+    version = '12.18.4'
+    // Version of npm to use.
+    npmVersion = '6.14.6'
+    // Version of Yarn to use.
+    // yarnVersion = '1.10.1'    
+    
+	// If true, it will download node using above parameters.
+    // If false, it will try to use globally installed node.    
+    download = true
+
+    println "[node] Node Version: ${version}, NPM version: ${npmVersion}"
+	// Set the work directory for unpacking node
+	println "[node] NodeJS work directory: ${project.buildDir}/nodejs"
+    workDir = file("${project.buildDir}/nodejs")
+    // Set the work directory for NPM
+	println "[node] NPM work directory: ${project.buildDir}/npm"
+    npmWorkDir = file("${project.buildDir}/npm")   
+    // Set the work directory for Yarn
+	println "[node] Yarn  work directory: ${project.buildDir}/yarn"
+    yarnWorkDir = file("${project.buildDir}/yarn")
+	// Set the work directory where node_modules should be located
+	println "[node] Node Modules location: ${project.projectDir}"
+    nodeModulesDir = file("${project.projectDir}")     
+}
+
+task copyMibLibrary(type: Copy) {
+	description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
+	// TODO: Replace with Nexus NPM Dependencies
+    from "lib/**"
+	into "node_modules/"  		
+	outputs.upToDateWhen { false }
+}
+
+npm_run_build {
+    // make sure the build task is executed only when appropriate files change
+    inputs.files fileTree('src/main/webapp/public')
+    inputs.files fileTree('src/main/webapp/src')
+    inputs.files fileTree('src/main/webapp/config')
+
+    // 'node_modules' appeared not reliable for dependency change detection (the task was rerun without changes)
+    // though 'package.json' and 'package-lock.json' should be enough anyway
+    inputs.file 'package.json'
+    inputs.file 'package-lock.json'
+
+    outputs.dir 'build'
+//    args = ['--base-href /web/', '--prod']
+	
+	outputs.upToDateWhen { false }	
+}
+npm_run_build.dependsOn copyMibLibrary
+
+// pack output of the build into JAR file
+task packageNpmApp(type: Zip) {
+	description 'Pack NPM build output into a single JAR file'
+    dependsOn npm_run_build
+    baseName "${project.name}-web"
+    extension 'jar'
+    destinationDir file("${project.buildDir}/libs")
+    from('build/dist') {
+        // optional path under which output will be visible in Java classpath, e.g. static resources path
+        into 'static/web'
+    }
+	println "[node] Packaged app: ${project.name}-web"
+	outputs.upToDateWhen { false }
+}
+assemble.dependsOn packageNpmApp
+
+// expose the artifact created by the packaging task
+artifacts {
+    npmResources(packageNpmApp.archivePath) {
+        builtBy packageNpmApp
+        type 'jar'
+    }
+}
+
+clean {
+	description 'Clean up after NPM build'
+	delete 'dist'
+//	delete 'package-lock.json'
+//	delete 'yarn.lock'
+    delete packageNpmApp.archivePath
+}
+processResources.dependsOn packageNpmApp
+
+dependencies {
+	// ### Angular Application ###
+	// if (!project.hasProperty("excludeUI")) {
+		runtimeOnly files(packageNpmApp.archivePath)	
+	// }
+}

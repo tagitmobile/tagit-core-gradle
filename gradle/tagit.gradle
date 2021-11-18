@@ -1,0 +1,188 @@
+apply plugin: "eclipse"
+apply plugin: "project-report"
+
+apply from: "${rootDir}/gradle/spotless/style.gradle"
+
+sonarqube {
+	properties {
+		property "sonar.host.url", "https://sonarqube.tagitmobile.com"
+		//CI-CD Tools Credentials 
+        property "sonar.login", "gradle"
+        property "sonar.password", "Tagit123"
+	}
+}
+
+repositories {
+	// [rj.added 2020.06.04] local nexus repository for offline work
+	if (null != System.properties['local']) {
+		println "Using local public repository local-maven-public (maven-public + tagit-maven-public)" 
+	    maven {
+			url 'http://localhost:8081/repository/local-maven-public/'
+			allowInsecureProtocol = true  
+		}	
+	} else {
+		// [rj.added 2020.04.22] pull from Tagit Nexus Maven repository
+	    maven {
+			url 'https://nexus.tagitmobile.com/repository/maven-public/'  
+	    }
+		mavenCentral()
+	}
+}
+
+configurations.all {
+	resolutionStrategy.cacheChangingModulesFor 10, 'seconds'
+    resolutionStrategy.cacheDynamicVersionsFor 10, 'seconds'
+}
+
+configurations {
+	// [rj.added 2020.06.10] to prevent spillage of testing classes to run-time (added as API to simplify development)
+	runtimeClasspath.exclude group: 'org.junit.jupiter'
+	runtimeClasspath.exclude group: 'org.mockito'
+	runtimeClasspath.exclude group: 'org.hamcrest'		
+	runtimeClasspath.exclude group: 'junit'
+	runtimeClasspath.exclude module: 'filterext'
+}
+
+// use the built-in java task instead of creating a new genDoc javadoc task
+javadoc { 
+  source = delombok // delombok [rj.added 2020.04.18] allow JavaDocs on delombok'd code
+  classpath = configurations.compileClasspath // ensure your dependencies are using compileClasspath
+  destinationDir = file('javadoc/')
+  exclude "**/*.md"
+//  exclude "**/domain/**"
+  title = "${projectName} v" + version
+  options.overview = "src/main/javadoc/overview.html"
+  options.stylesheetFile = new File(projectDir, "src/main/javadoc/styles.css");  
+}
+
+// [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
+task sourcesJar(type: Jar, dependsOn: classes) {
+    description 'Packages all sources into a single sources JAR for debugging purposes'
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+// [rj.added 2020.04.19] tagit-cores-x.y.z-javadoc.jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    description 'Packages javadoc output into a single sources JAR for publishing purposes'
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+task copyJar(type: Copy) {
+    from jar, sourcesJar, javadocJar
+    into "deploy"
+}
+copyJar.dependsOn sourcesJar
+copyJar.dependsOn javadocJar
+
+compileJava {
+    options.compilerArgs << '-parameters'
+    options.encoding = "cp1252" // instead of "UTF-8" // https://nvd.nist.gov/vuln/detail/CVE-2021-42574
+    options.fork = true
+    options.forkOptions.executable = 'javac'
+}
+ 
+compileTestJava {
+    options.compilerArgs << '-parameters'
+    options.encoding = "cp1252" // instead of "UTF-8" // https://nvd.nist.gov/vuln/detail/CVE-2021-42574
+    options.fork = true
+    options.forkOptions.executable = 'javac'
+}
+
+jar {
+    manifest {
+//        attributes("Dependencies": "deployment.tagit-core.jar export")
+		attributes("Specification-Title": "${projectName} Build " + getDate())
+		attributes("Specification-Version": archiveVersion) // [rj.updated 2020.06.01] gradle 6.4.1 support instead of version
+		attributes("Specification-Vendor": "Tagit Pte Ltd")        
+		attributes("Build-Date": getDate())
+    }
+}
+
+def getDate() {
+    return new Date().format('yyyyMMddHHmmss')
+}
+
+build.dependsOn copyJar
+
+task copyDependencies(type: Copy) {
+  from configurations.runtimeClasspath // [rj.updated 2020.06.01] gradle 6.4.1 support instead of configurations.default
+  into 'build/dependencies'
+}
+
+clean.doLast {
+    file('build/delombok').deleteDir()
+}
+
+// [rj.added 2020.07.10] clean-up Eclipse Open Resource window
+eclipse {
+	
+  project {
+    //if you don't want any node_modules folder to appear in Eclipse, you can filter it out:
+    resourceFilter {
+      appliesTo = 'FOLDERS'
+      type = 'EXCLUDE_ALL'
+      matcher {
+        id = 'org.eclipse.ui.ide.multiFilter'
+        arguments = '1.0-name-matches-false-false-node_modules'
+      }
+    }
+
+    // resourceFilter {
+    //   appliesTo = 'FOLDERS'
+    //   type = 'EXCLUDE_ALL'
+    //   matcher {
+    //     id = 'org.eclipse.ui.ide.multiFilter'
+    //     arguments = '1.0-name-matches-false-false-bin'
+    //   }
+    // }
+	
+    resourceFilter {
+      appliesTo = 'FOLDERS'
+      type = 'EXCLUDE_ALL'
+      matcher {
+        id = 'org.eclipse.ui.ide.multiFilter'
+        arguments = '1.0-name-matches-false-false-build'
+      }
+    }	
+    resourceFilter {
+      appliesTo = 'FOLDERS'
+      type = 'EXCLUDE_ALL'
+      matcher {
+        id = 'org.eclipse.ui.ide.multiFilter'
+        arguments = '1.0-name-matches-false-false-javadoc'
+      }
+    }	
+
+	file {
+		withXml {
+			def node = it.asNode().getAt('filteredResources')
+			// println "node: " + node
+			node.filter.each { it.type.each { it.value = '10' } }
+		}
+
+		beforeMerged { project ->
+			// println "project: " + project
+			project.resourceFilters.clear()
+		}
+
+		whenMerged { project ->
+			// println "project: " + project
+//			project.resourceFilters.clear()
+		}
+	}
+  }
+}
+
+// [rj.added 2020.06.01] common dependencies for TagitCore Mobeix Service libraries
+dependencies {
+
+}
+
+defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
