@@ -26,7 +26,7 @@ java {
 	// optionally, Spotless can set copyright years by digging
 	// through git history (see "license" section below)
 
-	licenseHeaderFile "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/main/gradle/spotless/tagit.license"
+	licenseHeaderFile "$rootDir/gradle/spotless/tagit.license"
 
 }
 }
