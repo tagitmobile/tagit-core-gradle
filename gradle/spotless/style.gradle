@@ -1,4 +1,11 @@
 apply plugin: "com.diffplug.spotless"
+apply plugin: "de.undercouch.download"
+
+task downloadLicence(type: Download) {
+   src 'https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/main/gradle/spotless/tagit.license'
+    dest "$rootDir/gradle/spotless/"
+    overwrite true
+}
 
 spotless {
 // optional: limit format enforcement to just the files changed by this feature branch
