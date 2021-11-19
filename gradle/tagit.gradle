@@ -182,7 +182,16 @@ eclipse {
 
 // [rj.added 2020.06.01] common dependencies for TagitCore Mobeix Service libraries
 dependencies {
-
+	// --------------------------------------------------
+	// UNIT TESTS
+	// --------------------------------------------------
+	// ### Testing ###
+	testImplementation("com.tagit.commons:tagit-core-test:${tagitCoreVersion}")
+	testRuntimeOnly("com.tagit.commons:tagit-core-test:${tagitCoreVersion}") {
+	capabilities {
+		requireCapability("com.tagit.commons:tagit-core-test-runtime")
+	}
+  }
 }
 
 defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
