@@ -194,4 +194,9 @@ dependencies {
   }
 }
 
-defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
+task downloadLicence(type: Download) {
+    src 'https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/main/gradle/spotless/tagit.license'
+    dest "$rootDir/gradle/spotless/"
+    overwrite true
+}
+defaultTasks 'clean', 'eclipse','downloadLicence','build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
