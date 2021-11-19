@@ -195,4 +195,4 @@ dependencies {
   
 }
 
-defaultTasks 'clean', 'eclipse','build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
+defaultTasks 'clean', 'eclipse', 'downloadLicence', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
