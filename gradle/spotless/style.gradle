@@ -3,7 +3,7 @@ apply plugin: "de.undercouch.download"
 
 task downloadLicence(type: Download) {
    src 'https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/main/gradle/spotless/tagit.license'
-    dest "$rootDir/gradle/spotless/"
+    dest "$rootDir/gradle/spotless/tagit.license"
     overwrite true
 }
 
