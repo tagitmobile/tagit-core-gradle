@@ -198,6 +198,7 @@ dependencies {
 		requireCapability("com.tagit.commons:tagit-core-test-runtime")
 	}
   }
+  
 }
 
 defaultTasks 'clean', 'eclipse','downloadLicence','build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
