@@ -74,21 +74,6 @@ artifacts {
     archives javadocJar
 }
 
-// task downloadLicence(type: Download) {
-//   src 'https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/main/gradle/spotless/tagit.license'
-//    dest "$rootDir/gradle/spotless/"
-//    overwrite true
-//}
-
-task downloadLicence {
-    doLast {
-        download {
-            src 'https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/main/gradle/spotless/tagit.license'
-            dest "$rootDir/gradle/spotless/"
-            overwrite true
-        }
-    }
-}
 task copyJar(type: Copy) {
     from jar, sourcesJar, javadocJar
     into "deploy"
@@ -210,4 +195,4 @@ dependencies {
   
 }
 
-defaultTasks 'clean', 'eclipse','downloadLicence','build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
+defaultTasks 'clean', 'eclipse','build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
