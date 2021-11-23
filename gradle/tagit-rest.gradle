@@ -2,7 +2,7 @@ apply plugin: "war"
 apply plugin: 'org.springframework.boot'
 //apply plugin: 'io.spring.dependency-management' // [rj.commented 2021.10.07] Use Gradle's BOM support instead from tagit-core-rest
 
-apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitCoreVersion}/gradle/spotless/style.gradle"
+apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
 
 configurations {
 //	providedRuntime
