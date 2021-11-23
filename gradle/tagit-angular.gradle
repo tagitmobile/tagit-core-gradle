@@ -1,6 +1,8 @@
 apply plugin: 'war'
 apply plugin: 'com.github.node-gradle.node'
 
+apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitCoreVersion}/gradle/spotless/style.gradle"
+
 def getDate() {
     return new Date().format('yyyyMMddHHmmss')
 }
