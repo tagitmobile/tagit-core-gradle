@@ -39,8 +39,8 @@ java {
 typescript {
     target 'src/**/*.ts' // you have to set the target manually
 
-    tsfmt()    // has its own section below
-    prettier() // has its own section below
+   // tsfmt()    // has its own section below
+   // prettier() // has its own section below
 
     licenseHeaderFile "$rootDir/gradle/spotless/tagit.license" , '(import|const|declare|export|var) ' 
   }
