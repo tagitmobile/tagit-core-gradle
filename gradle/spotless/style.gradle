@@ -42,6 +42,6 @@ typescript {
     tsfmt()    // has its own section below
     prettier() // has its own section below
 
-    licenseHeaderFile "$rootDir/gradle/spotless/tagit.license"
+    licenseHeaderFile "$rootDir/gradle/spotless/tagit.license" , '(import|const|declare|export|var) ' 
   }
 }
