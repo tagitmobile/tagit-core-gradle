@@ -2,7 +2,7 @@ apply plugin: "com.diffplug.spotless"
 apply plugin: "de.undercouch.download"
 
 task downloadLicence(type: Download) {
-   src "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitCoreVersion}/gradle/spotless/tagit.license"
+   src "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/tagit.license"
     dest "$rootDir/gradle/spotless/tagit.license"
     overwrite true
 }
