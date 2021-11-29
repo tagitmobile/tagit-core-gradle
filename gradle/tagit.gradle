@@ -1,8 +1,6 @@
 apply plugin: "eclipse"
 apply plugin: "project-report"
 
-apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
-
 sonarqube {
 	properties {
 		property "sonar.host.url", "https://sonarqube.tagitmobile.com"
@@ -122,7 +120,11 @@ clean.doLast {
 
 // [rj.added 2020.07.10] clean-up Eclipse Open Resource window
 eclipse {
-	
+
+  classpath {
+    containers 'org.eclipse.jdt.launching.JRE_CONTAINER' 
+  }
+  	
   project {
     //if you don't want any node_modules folder to appear in Eclipse, you can filter it out:
     resourceFilter {
@@ -188,11 +190,11 @@ dependencies {
 	// ### Testing ###
 	testImplementation("com.tagit.commons:tagit-core-test:${tagitCoreVersion}")
 	testRuntimeOnly("com.tagit.commons:tagit-core-test:${tagitCoreVersion}") {
-	capabilities {
-		requireCapability("com.tagit.commons:tagit-core-test-runtime")
-	}
+    capabilities {
+      requireCapability("com.tagit.commons:tagit-core-test-runtime")
+    }
   }
   
 }
 
-defaultTasks 'clean', 'eclipse', 'downloadLicence', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
+defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
