@@ -1,6 +1,8 @@
 apply plugin: "eclipse"
 apply plugin: "project-report"
 
+apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
+
 sonarqube {
 	properties {
 		property "sonar.host.url", "https://sonarqube.tagitmobile.com"
@@ -197,4 +199,4 @@ dependencies {
   
 }
 
-defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
+defaultTasks 'clean', 'eclipse', 'downloadLicence', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
