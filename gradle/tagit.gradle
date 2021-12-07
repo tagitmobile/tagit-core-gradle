@@ -42,6 +42,11 @@ configurations {
 	runtimeClasspath.exclude group: 'junit'
 	runtimeClasspath.exclude module: 'filterext'
 }
+configurations {
+  testClasses {
+    extendsFrom(testRuntime)
+  }
+}
 
 // use the built-in java task instead of creating a new genDoc javadoc task
 javadoc { 
@@ -69,9 +74,15 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
+task testJar(type: Jar) {
+  classifier = 'test'
+  from sourceSets.test.output
+}
+
 artifacts {
     archives sourcesJar
     archives javadocJar
+    testClasses testJar
 }
 
 task copyJar(type: Copy) {
