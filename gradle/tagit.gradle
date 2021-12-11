@@ -109,7 +109,7 @@ compileTestJava {
 
 jar {
     manifest {
-      attributes("Dependencies": "deployment.mxprof.jar export") // Mobeix 6.x + JBoss specific
+      // attributes("Dependencies": "deployment.mxprof.jar export") // Mobeix 6.x + JBoss specific
   		attributes("Specification-Title": "${projectName} Build " + getDate())
 	  	attributes("Specification-Version": archiveVersion) // [rj.updated 2020.06.01] gradle 6.4.1 support instead of version
 		  attributes("Specification-Vendor": "Tagit Pte Ltd")        
