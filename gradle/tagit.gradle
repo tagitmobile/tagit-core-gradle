@@ -109,11 +109,11 @@ compileTestJava {
 
 jar {
     manifest {
-//        attributes("Dependencies": "deployment.tagit-core.jar export")
-		attributes("Specification-Title": "${projectName} Build " + getDate())
-		attributes("Specification-Version": archiveVersion) // [rj.updated 2020.06.01] gradle 6.4.1 support instead of version
-		attributes("Specification-Vendor": "Tagit Pte Ltd")        
-		attributes("Build-Date": getDate())
+      attributes("Dependencies": "deployment.mxprof.jar export") // Mobeix 6.x + JBoss specific
+  		attributes("Specification-Title": "${projectName} Build " + getDate())
+	  	attributes("Specification-Version": archiveVersion) // [rj.updated 2020.06.01] gradle 6.4.1 support instead of version
+		  attributes("Specification-Vendor": "Tagit Pte Ltd")        
+		  attributes("Build-Date": getDate())
     }
 }
 
@@ -189,8 +189,16 @@ eclipse {
 		}
 
 		whenMerged { project ->
-			// println "project: " + project
+//			println "---- project: " + project
 //			project.resourceFilters.clear()
+
+			// [rj.added 2021.12.11] Fix for Eclipse IDE error: Java compiler level does not match the version of the installed Java project facet.
+//			println "old natures: " + project.natures
+    		project.natures.removeAll { it.contains('org.eclipse.wst') || it.contains('org.eclipse.jem') }
+    		//println "new natures: " + project.natures 	       		
+//    		println "old buildCommands: " + project.buildCommands
+    		project.buildCommands.removeAll { it.name.contains('org.eclipse.wst') }
+//    		println "new buildCommands: " + project.buildCommands 	   
 		}
 	}
   }
