@@ -2,13 +2,8 @@ apply plugin: "war"
 apply plugin: 'org.springframework.boot'
 //apply plugin: 'io.spring.dependency-management' // [rj.commented 2021.10.07] Use Gradle's BOM support instead from tagit-core-rest
 
-
-configurations {
-//	providedRuntime
-	compile.exclude module: 'spring-boot-starter-logging' // to replace with log4j2 and fix the exception Exception in thread "main" java.lang.StackOverflowError at org.apache.logging.log4j.util.StackLocator.getCallerClass(StackLocator.java:112)
-	//compile.exclude module: 'junit' // TODO: to replace with JUnit Jupiter, JUnit 4.12 used by TagitCore AbstractBizServiceTest 
-//	compile.exclude module: 'hibernate-validator'
-//	compile.exclude module: 'spring-boot-starter-json' // to replace with gson // [rj.added 2018.12.04] removing causes problems with io.springfox and spring-boot-starter-actuator: Error creating bean with name 'objectMapperConfigurer'
+configurations.all {
+	exclude module: 'spring-boot-starter-logging' // to replace with log4j2 and fix the exception Exception in thread "main" java.lang.StackOverflowError at org.apache.logging.log4j.util.StackLocator.getCallerClass(StackLocator.java:112)
 }
 
 def getDate() {
@@ -18,12 +13,16 @@ def getDate() {
 // By default, when the bootJar or bootWar tasks are configured, the jar or war tasks are disabled. A project can be configured to build both an executable archive and a normal archive at the same time by enabling the jar or war task:
 jar {
 	enabled = true
+	classifier = 'lib'
 }
 
 // To avoid the executable archive and the normal archive from being written to the same location, one or the other should be configured to use a different location. One way to do so is by configuring a classifier:
 bootJar {
+	enabled = true
 	classifier = 'boot'
-	launchScript() // Spring Boot provides support for fully executable archives. An archive is made fully executable by prepending a shell script that knows how to launch the application. On Unix-like platforms, this launch script allows the archive to be run directly like any other executable or to be installed as a service.
+	
+	// [rj.commented 2021.10.18] Conflicts with bootBuildImage: not compatible with buildpacks; ensure jar file is valid and launch script is not enabled
+// 	launchScript() // Spring Boot provides support for fully executable archives. An archive is made fully executable by prepending a shell script that knows how to launch the application. On Unix-like platforms, this launch script allows the archive to be run directly like any other executable or to be installed as a service.
 	
 	from('src/main/webapp') {
         into '/public'
@@ -38,6 +37,7 @@ bootJar {
 }
 
 bootWar {
+	enabled = true
 	includes = ["WEB-INF/**", "META-INF/**"]
     manifest {
 		attributes("Specification-Title": "${projectName}")
@@ -48,10 +48,10 @@ bootWar {
 }
 
 task copyWar(type: Copy) {
-    from war, bootJar , bootWar
+	dependsOn copyJar, bootWar
+    from war, bootJar, bootWar
     into "deploy"
 }
-copyJar.dependsOn copyWar
 
 // [rj.added 2020.06.01] common dependencies for TagitCore Rest applications
 dependencies {
@@ -79,4 +79,5 @@ dependencies {
 	providedRuntime("com.tagit.commons:tagit-core-db:${tagitCoreVersion}")
 	
 }
+
 defaultTasks 'clean', 'eclipse', 'build', 'bootJar', 'copyWar', 'htmlDependencyReport', 'copyDependencies'

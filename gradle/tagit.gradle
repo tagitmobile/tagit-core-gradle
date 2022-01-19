@@ -34,13 +34,13 @@ configurations.all {
     resolutionStrategy.cacheDynamicVersionsFor 10, 'seconds'
 }
 
-configurations {
+configurations.runtimeClasspath {
 	// [rj.added 2020.06.10] to prevent spillage of testing classes to run-time (added as API to simplify development)
-	runtimeClasspath.exclude group: 'org.junit.jupiter'
-	runtimeClasspath.exclude group: 'org.mockito'
-	runtimeClasspath.exclude group: 'org.hamcrest'		
-	runtimeClasspath.exclude group: 'junit'
-	runtimeClasspath.exclude module: 'filterext'
+	exclude group: 'org.junit.jupiter'
+	exclude group: 'org.mockito'
+	exclude group: 'org.hamcrest'		
+	exclude group: 'junit'
+	// exclude module: 'filterext'
 }
 
 // [Parthi.added 2021.12.08] For test project dependency 
@@ -76,7 +76,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 // [Parthi.added 2021.12.08] For test project dependency 
 task testJar(type: Jar, dependsOn: testClasses) {
-    baseName = "test-${project.archivesBaseName}"
+    archiveBaseName = "test-${project.archivesBaseName}"
     from sourceSets.test.output
 }
 
@@ -96,10 +96,10 @@ copyJar.dependsOn javadocJar
 compileJava {
     options.compilerArgs << '-parameters'
     options.encoding = "cp1252" // instead of "UTF-8" // https://nvd.nist.gov/vuln/detail/CVE-2021-42574
-    options.fork = true
+	options.fork = true
     options.forkOptions.executable = 'javac'
 }
- 
+
 compileTestJava {
     options.compilerArgs << '-parameters'
     options.encoding = "cp1252" // instead of "UTF-8" // https://nvd.nist.gov/vuln/detail/CVE-2021-42574
