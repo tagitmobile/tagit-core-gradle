@@ -63,6 +63,7 @@ javadoc {
 // [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
 task sourcesJar(type: Jar, dependsOn: classes) {
     description 'Packages all sources into a single sources JAR for debugging purposes'
+    duplicatesStrategy = 'include'
     classifier = 'sources'
     from sourceSets.main.allSource
 }
