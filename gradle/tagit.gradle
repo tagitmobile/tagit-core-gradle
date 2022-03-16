@@ -76,7 +76,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 // [Parthi.added 2021.12.08] For test project dependency 
 task testJar(type: Jar, dependsOn: testClasses) {
-    baseName = "test-${project.archivesBaseName}"
+    baseName = "test-${project.archiveBaseName}"
     from sourceSets.test.output
 }
 
