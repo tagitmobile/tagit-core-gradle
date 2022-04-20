@@ -45,7 +45,7 @@ configurations.runtimeClasspath {
 
 // [Parthi.added 2021.12.08] For test project dependency 
 configurations {
-    tests
+    testArtifacts.extendsFrom testCompile
 }
 
 // use the built-in java task instead of creating a new genDoc javadoc task
@@ -77,14 +77,15 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 // [Parthi.added 2021.12.08] For test project dependency 
 task testJar(type: Jar, dependsOn: testClasses) {
-    archiveBaseName = "test-${project.archivesBaseName}"
+    classifier "test"
+    archiveBaseName = "${project.archivesBaseName}-test"
     from sourceSets.test.output
 }
 
 artifacts {
     archives sourcesJar
     archives javadocJar
-    tests testJar // [Parthi.added 2021.12.08] For test project dependency 
+    testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
 }
 
 task copyJar(type: Copy) {
