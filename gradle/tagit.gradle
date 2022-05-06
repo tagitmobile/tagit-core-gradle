@@ -88,6 +88,12 @@ artifacts {
     testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
 }
 
+task cleanDeploy(type:Delete) {
+	description 'Cleaning up deploy folder'
+	delete "deploy"	  
+}
+cleanDeploy dependsOn clean
+
 task copyJar(type: Copy) {
     from jar, sourcesJar, javadocJar
     into "deploy"
