@@ -88,6 +88,7 @@ artifacts {
     testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
 }
 
+//[Parthi. added 06-05-2022 for deleting deply folder]
 task cleanDeploy(type:Delete) {
 	description 'Cleaning up deploy folder'
 	delete "deploy"	  
