@@ -92,7 +92,7 @@ task cleanDeploy(type:Delete) {
 	description 'Cleaning up deploy folder'
 	delete "deploy"	  
 }
-cleanDeploy dependsOn clean
+cleanDeploy.dependsOn clean
 
 task copyJar(type: Copy) {
     from jar, sourcesJar, javadocJar
