@@ -1,4 +1,5 @@
-apply plugin: "eclipse"
+// apply plugin: "eclipse"
+apply plugin: "eclipse-wtp" //Parthi . modified to include dependent libs in WEB-INF/lib
 apply plugin: "project-report"
 
 // apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
