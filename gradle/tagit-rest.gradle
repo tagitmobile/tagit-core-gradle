@@ -51,7 +51,7 @@ bootWar {
 }
 
 task copyWar(type: Copy) {
-    // dependsOn copyJar, bootWar
+    dependsOn bootWar
     from war, bootJar, bootWar
     into "deploy"
 }
