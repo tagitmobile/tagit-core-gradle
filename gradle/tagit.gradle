@@ -101,7 +101,6 @@ task copyJar(type: Copy) {
 }
 copyJar.dependsOn sourcesJar
 copyJar.dependsOn javadocJar
-copyJar.dependsOn copyWar
 
 compileJava {
     options.compilerArgs << '-parameters'
