@@ -19,7 +19,7 @@ jar {
 // To avoid the executable archive and the normal archive from being written to the same location, one or the other should be configured to use a different location. One way to do so is by configuring a classifier:
 bootJar {
 	enabled = true
-	// classifier = 'boot'
+	classifier = 'boot'
 	
 	// [rj.commented 2021.10.18] Conflicts with bootBuildImage: not compatible with buildpacks; ensure jar file is valid and launch script is not enabled
 // 	launchScript() // Spring Boot provides support for fully executable archives. An archive is made fully executable by prepending a shell script that knows how to launch the application. On Unix-like platforms, this launch script allows the archive to be run directly like any other executable or to be installed as a service.
