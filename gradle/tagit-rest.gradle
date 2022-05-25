@@ -55,6 +55,7 @@ task copyWar(type: Copy) {
     from war, bootJar, bootWar
     into "deploy"
 }
+copyJar.dependsOn copyWar
 
 // [rj.added 2020.06.01] common dependencies for TagitCore Rest applications
 dependencies {
