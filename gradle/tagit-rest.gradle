@@ -15,6 +15,9 @@ jar {
 	enabled = true
 	classifier = null
 }
+war {
+	enabled = false
+}
 
 // To avoid the executable archive and the normal archive from being written to the same location, one or the other should be configured to use a different location. One way to do so is by configuring a classifier:
 bootJar {
