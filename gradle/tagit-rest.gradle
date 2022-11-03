@@ -13,7 +13,10 @@ def getDate() {
 // By default, when the bootJar or bootWar tasks are configured, the jar or war tasks are disabled. A project can be configured to build both an executable archive and a normal archive at the same time by enabling the jar or war task:
 jar {
 	enabled = true
-	classifier = 'lib'
+	classifier = null
+}
+war {
+	enabled = false
 }
 
 // To avoid the executable archive and the normal archive from being written to the same location, one or the other should be configured to use a different location. One way to do so is by configuring a classifier:
@@ -48,10 +51,11 @@ bootWar {
 }
 
 task copyWar(type: Copy) {
-	dependsOn copyJar, bootWar
+    dependsOn bootWar
     from war, bootJar, bootWar
     into "deploy"
 }
+copyJar.dependsOn copyWar
 
 // [rj.added 2020.06.01] common dependencies for TagitCore Rest applications
 dependencies {
