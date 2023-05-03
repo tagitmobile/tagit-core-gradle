@@ -74,7 +74,10 @@ dependencies {
 	}
 	
 	// ### Runtime Standalone ###
-	compileOnly "javax.servlet:javax.servlet-api" // instead of tomcat, this allows seamless deployment to J2EE containers
+//	compileOnly "javax.servlet:javax.servlet-api" // instead of tomcat, this allows seamless deployment to J2EE containers
+	// https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
+	compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0' // [rj.added 2023.05.03] Spring Boot 3 migrated to Jakarta EE 10
+
 	providedRuntime "org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}"
 
 	// --------------------------------------------------
