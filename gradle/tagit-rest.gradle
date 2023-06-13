@@ -60,14 +60,17 @@ copyJar.dependsOn copyWar
 // [rj.added 2020.06.01] common dependencies for TagitCore Rest applications
 dependencies {
 
+	// [rj.added 2023.06.13] align with TagitCore BOM as a standard
+	implementation platform("com.tagit.commons:tagit-core-bom:${tagitCoreVersion}")
+
     // ### Unit Testing ###
-	testImplementation("com.tagit.commons:tagit-core-test:${tagitCoreVersion}")
-	testImplementation("com.tagit.commons:tagit-core-test:${tagitCoreVersion}") {
+	testImplementation("com.tagit.commons:tagit-core-test")
+	testImplementation("com.tagit.commons:tagit-core-test") {
 		capabilities {
 	    	requireCapability("com.tagit.commons:tagit-core-test-boot")
         }
 	}
-	testRuntimeOnly("com.tagit.commons:tagit-core-test:${tagitCoreVersion}") {
+	testRuntimeOnly("com.tagit.commons:tagit-core-test") {
 		capabilities {
 	    	requireCapability("com.tagit.commons:tagit-core-test-runtime")
         }
@@ -78,12 +81,12 @@ dependencies {
 	// https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
 	compileOnly "jakarta.servlet:jakarta.servlet-api" // [rj.added 2023.05.03] Spring Boot 3 migrated to Jakarta EE 10
 
-	providedRuntime "org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}"
+	providedRuntime "org.springframework.boot:spring-boot-starter-tomcat"
 
 	// --------------------------------------------------
 	// DB CONNECTIVITY
 	// --------------------------------------------------
-	providedRuntime("com.tagit.commons:tagit-core-db:${tagitCoreVersion}")
+	providedRuntime("com.tagit.commons:tagit-core-db")
 	
 }
 

@@ -215,12 +215,16 @@ eclipse {
 
 // [rj.added 2020.06.01] common dependencies for TagitCore Mobeix Service libraries
 dependencies {
+
+	// [rj.added 2023.06.13] align with TagitCore BOM as a standard
+	implementation platform("com.tagit.commons:tagit-core-bom:${tagitCoreVersion}")
+
 	// --------------------------------------------------
 	// UNIT TESTS
 	// --------------------------------------------------
 	// ### Testing ###
-	testImplementation("com.tagit.commons:tagit-core-test:${tagitCoreVersion}")
-	testRuntimeOnly("com.tagit.commons:tagit-core-test:${tagitCoreVersion}") {
+	testImplementation("com.tagit.commons:tagit-core-test")
+	testRuntimeOnly("com.tagit.commons:tagit-core-test") {
     capabilities {
       requireCapability("com.tagit.commons:tagit-core-test-runtime")
     }
