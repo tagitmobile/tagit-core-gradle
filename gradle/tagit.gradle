@@ -34,18 +34,18 @@ configurations.all {
     resolutionStrategy.cacheDynamicVersionsFor 10, 'seconds'
 }
 
-configurations {
+configurations.runtimeClasspath {
 	// [rj.added 2020.06.10] to prevent spillage of testing classes to run-time (added as API to simplify development)
-	runtimeClasspath.exclude group: 'org.junit.jupiter'
-	runtimeClasspath.exclude group: 'org.mockito'
-	runtimeClasspath.exclude group: 'org.hamcrest'		
-	runtimeClasspath.exclude group: 'junit'
-	runtimeClasspath.exclude module: 'filterext'
+	exclude group: 'org.junit.jupiter'
+	exclude group: 'org.mockito'
+	exclude group: 'org.hamcrest'		
+	exclude group: 'junit'
+	// exclude module: 'filterext'
 }
 
 // [Parthi.added 2021.12.08] For test project dependency 
 configurations {
-    tests
+    testArtifacts.extendsFrom testCompile
 }
 
 // use the built-in java task instead of creating a new genDoc javadoc task
@@ -63,6 +63,7 @@ javadoc {
 // [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
 task sourcesJar(type: Jar, dependsOn: classes) {
     description 'Packages all sources into a single sources JAR for debugging purposes'
+    duplicatesStrategy = 'include'
     classifier = 'sources'
     from sourceSets.main.allSource
 }
@@ -76,15 +77,23 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 // [Parthi.added 2021.12.08] For test project dependency 
 task testJar(type: Jar, dependsOn: testClasses) {
-    baseName = "test-${project.archivesBaseName}"
+    classifier "test"
+    archiveBaseName = "${project.archivesBaseName}-test"
     from sourceSets.test.output
 }
 
 artifacts {
     archives sourcesJar
     archives javadocJar
-    tests testJar // [Parthi.added 2021.12.08] For test project dependency 
+    testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
 }
+
+//[Parthi. added 06-05-2022 for deleting deply folder]
+task cleanDeploy(type:Delete) {
+	description 'Cleaning up deploy folder'
+	delete "deploy"	  
+}
+cleanDeploy.dependsOn clean
 
 task copyJar(type: Copy) {
     from jar, sourcesJar, javadocJar
@@ -96,10 +105,10 @@ copyJar.dependsOn javadocJar
 compileJava {
     options.compilerArgs << '-parameters'
     options.encoding = "cp1252" // instead of "UTF-8" // https://nvd.nist.gov/vuln/detail/CVE-2021-42574
-    options.fork = true
+	options.fork = true
     options.forkOptions.executable = 'javac'
 }
- 
+
 compileTestJava {
     options.compilerArgs << '-parameters'
     options.encoding = "cp1252" // instead of "UTF-8" // https://nvd.nist.gov/vuln/detail/CVE-2021-42574
@@ -206,12 +215,16 @@ eclipse {
 
 // [rj.added 2020.06.01] common dependencies for TagitCore Mobeix Service libraries
 dependencies {
+
+	// [rj.added 2023.06.13] align with TagitCore BOM as a standard
+	implementation platform("com.tagit.commons:tagit-core-bom:${tagitCoreVersion}")
+
 	// --------------------------------------------------
 	// UNIT TESTS
 	// --------------------------------------------------
 	// ### Testing ###
-	testImplementation("com.tagit.commons:tagit-core-test:${tagitCoreVersion}")
-	testRuntimeOnly("com.tagit.commons:tagit-core-test:${tagitCoreVersion}") {
+	testImplementation("com.tagit.commons:tagit-core-test")
+	testRuntimeOnly("com.tagit.commons:tagit-core-test") {
     capabilities {
       requireCapability("com.tagit.commons:tagit-core-test-runtime")
     }
