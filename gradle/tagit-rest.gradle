@@ -89,5 +89,4 @@ dependencies {
 	providedRuntime("com.tagit.commons:tagit-core-db")
 	
 }
-
 defaultTasks 'clean', 'eclipse', 'build', 'bootJar', 'copyWar', 'htmlDependencyReport', 'copyDependencies'
