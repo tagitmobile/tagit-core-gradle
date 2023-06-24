@@ -6,7 +6,7 @@ The home of the common Gradle Scripts used by Tagit and Mobeix Java frameworks, 
 ### gradle.properties
 Define a property `tagitGradleVersion` for use inside the Gradle scripts. The value of this property is the branch name in the GitHub repositories.
 ```
-tagitGradleVersion = release/v6.15
+tagitGradleVersion = release/v6.15.2
 ```
 
 ### build.gradle
