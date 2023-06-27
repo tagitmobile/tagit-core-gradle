@@ -17,12 +17,11 @@ repositories {
 	if (null != System.properties['partner']) {
 		println "Using partner public repository maven-public" 
 	    maven {
-			url 'http://partner-nexus.tagitmobile.com:8081/repository/maven-public/'
-			allowInsecureProtocol = true  
-	        credentials {
+			url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
+	    credentials {
                 username project.nexusUser
                 password project.nexusPassword
-	   		}		
+	   	}		
 		}
 	// [rj.added 2020.06.04] local nexus repository for offline work
 	} else if (null != System.properties['local']) {
