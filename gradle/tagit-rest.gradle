@@ -2,8 +2,20 @@ apply plugin: "war"
 apply plugin: 'org.springframework.boot'
 //apply plugin: 'io.spring.dependency-management' // [rj.commented 2021.10.07] Use Gradle's BOM support instead from tagit-core-rest
 
+ext {
+	// default a tomcat version
+	if (!project.hasProperty("tomcatVersion")) {
+	    tomcatVersion = "10.1.14"
+	}
+}
+
+
 configurations.all {
 	exclude module: 'spring-boot-starter-logging' // to replace with log4j2 and fix the exception Exception in thread "main" java.lang.StackOverflowError at org.apache.logging.log4j.util.StackLocator.getCallerClass(StackLocator.java:112)
+
+	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
+	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-el:${tomcatVersion}"
+	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-websocket:${tomcatVersion}"
 }
 
 def getDate() {
