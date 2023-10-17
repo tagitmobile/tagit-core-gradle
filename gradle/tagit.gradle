@@ -74,21 +74,21 @@ javadoc {
 task sourcesJar(type: Jar, dependsOn: classes) {
     description 'Packages all sources into a single sources JAR for debugging purposes'
     duplicatesStrategy = 'include'
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
 // [rj.added 2020.04.19] tagit-cores-x.y.z-javadoc.jar
 task javadocJar(type: Jar, dependsOn: javadoc) {
     description 'Packages javadoc output into a single sources JAR for publishing purposes'
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
 // [Parthi.added 2021.12.08] For test project dependency 
 task testJar(type: Jar, dependsOn: testClasses) {
-    classifier "test"
-    archiveBaseName = "${project.archivesBaseName}-test"
+    archiveClassifier = 'test'
+//    archiveBaseName = "${project.archivesBaseName}-test"
     from sourceSets.test.output
 }
 
@@ -115,15 +115,15 @@ copyJar.dependsOn javadocJar
 compileJava {
     options.compilerArgs << '-parameters'
     options.encoding = "cp1252" // instead of "UTF-8" // https://nvd.nist.gov/vuln/detail/CVE-2021-42574
-	options.fork = true
-    options.forkOptions.executable = 'javac'
+	  options.fork = true
+    // options.forkOptions.executable = 'javac'
 }
 
 compileTestJava {
     options.compilerArgs << '-parameters'
     options.encoding = "cp1252" // instead of "UTF-8" // https://nvd.nist.gov/vuln/detail/CVE-2021-42574
     options.fork = true
-    options.forkOptions.executable = 'javac'
+    // options.forkOptions.executable = 'javac'
 }
 
 jar {
