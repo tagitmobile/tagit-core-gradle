@@ -1,7 +1,7 @@
 apply plugin: "eclipse"
 apply plugin: "project-report"
 
-// apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
+//apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
 
 sonarqube {
 	properties {
@@ -13,8 +13,18 @@ sonarqube {
 }
 
 repositories {
+	// [rj.added 2023.06.27] secure nexus repository for partner use
+	if (null != System.properties['partner']) {
+		println "Using partner public repository maven-public" 
+	    maven {
+			url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
+	    credentials {
+                username project.nexusUser
+                password project.nexusPassword
+	   	}		
+		}
 	// [rj.added 2020.06.04] local nexus repository for offline work
-	if (null != System.properties['local']) {
+	} else if (null != System.properties['local']) {
 		println "Using local public repository local-maven-public (maven-public + tagit-maven-public)" 
 	    maven {
 			url 'http://localhost:8081/repository/local-maven-public/'
@@ -64,21 +74,21 @@ javadoc {
 task sourcesJar(type: Jar, dependsOn: classes) {
     description 'Packages all sources into a single sources JAR for debugging purposes'
     duplicatesStrategy = 'include'
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
 // [rj.added 2020.04.19] tagit-cores-x.y.z-javadoc.jar
 task javadocJar(type: Jar, dependsOn: javadoc) {
     description 'Packages javadoc output into a single sources JAR for publishing purposes'
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
 // [Parthi.added 2021.12.08] For test project dependency 
 task testJar(type: Jar, dependsOn: testClasses) {
-    classifier "test"
-    archiveBaseName = "${project.archivesBaseName}-test"
+    archiveClassifier = 'test'
+//    archiveBaseName = "${project.archivesBaseName}-test"
     from sourceSets.test.output
 }
 
