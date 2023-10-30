@@ -1,5 +1,10 @@
 apply plugin: "maven-publish"
 
+// [rj.added 2023.10.30] force publishing of enforced platform WARs
+tasks.withType(GenerateModuleMetadata).configureEach {
+    suppressedValidationErrors.add('enforced-platform')
+}
+
 publishing {
 	publications {
         mavenJava(MavenPublication) {
