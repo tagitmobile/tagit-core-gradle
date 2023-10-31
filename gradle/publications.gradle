@@ -46,3 +46,17 @@ publishing {
         }
     }
 }
+
+// [rj.added 2023.10.31] check if the bootWar task exists
+if (project.tasks.findByName('bootWar')) {
+	publishing {
+		publications {
+			bootJava(MavenPublication) {
+				artifact tasks.named("bootWar")
+			}
+	    }
+	}
+	println "Boot WAR artifacts will also be published."
+} else {
+	println "No Boot WAR artifacts will be published."
+}
