@@ -5,6 +5,8 @@ tasks.withType(GenerateModuleMetadata).configureEach {
     suppressedValidationErrors.add('enforced-platform')
 }
 
+println "Note: In order to publish bootWar artifacts, please ensure `publications.gradle` is applied first before `tagit-rest.gradle`"
+
 publishing {
 	publications {
         mavenJava(MavenPublication) {
