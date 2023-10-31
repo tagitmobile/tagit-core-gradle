@@ -35,6 +35,15 @@ publishing {
 				// please override with the proper credentials (see https://docs.gradle.org/current/samples/sample_publishing_credentials.html)
 	            credentials(PasswordCredentials)
 	            println "Publish target will be partner repository $url as $project.name:$version"
+        	} else if (null != System.properties['qa']) {
+	            def releasesRepoUrl = "https://nexus.tagitmobile.com/repository/maven-qa/"
+	            def snapshotsRepoUrl = "https://nexus.tagitmobile.com/repository/maven-snapshots/"
+	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+	            credentials {
+	                username 'gradle'
+	                password 'Tagit123'
+	            }
+	            println "Publish target will be central repository $url as $project.name:$version"
         	} else {
 	            def releasesRepoUrl = "https://nexus.tagitmobile.com/repository/maven-releases/"
 	            def snapshotsRepoUrl = "https://nexus.tagitmobile.com/repository/maven-snapshots/"
