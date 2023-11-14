@@ -25,7 +25,7 @@ def getDate() {
 // By default, when the bootJar or bootWar tasks are configured, the jar or war tasks are disabled. A project can be configured to build both an executable archive and a normal archive at the same time by enabling the jar or war task:
 jar {
 	enabled = true
-	archiveClassifier.set("")
+	archiveClassifier = ''
 }
 war {
 	enabled = false
@@ -60,6 +60,20 @@ bootWar {
 		attributes("Specification-Vendor": "Tagit Pte Ltd")        
 		attributes("Build-Date": getDate())		
     }
+}
+
+// [rj.added 2023.10.31] check if the publish task exists
+if (project.tasks.findByName('publish')) {
+	publishing {
+		publications {
+			bootJava(MavenPublication) {
+				artifact tasks.named("bootWar")
+			}
+	    }
+	}
+	println "Boot WAR artifacts will also be published."
+} else {
+	println "No Boot WAR artifacts will be published."
 }
 
 task copyWar(type: Copy) {
