@@ -66,7 +66,12 @@ bootWar {
 if (project.tasks.findByName('publish')) {
 	publishing {
 		publications {
-			bootJava(MavenPublication) {
+			// [rj.commented.2023.11.20] this is publishing to a different snapshot entry from mavenJava
+			// bootJava(MavenPublication) {
+			// 	artifact tasks.named("bootWar")
+			// }
+			mavenJava(MavenPublication) {
+//				from components.web // Maven publication 'mavenJava' cannot include multiple components
 				artifact tasks.named("bootWar")
 			}
 	    }
