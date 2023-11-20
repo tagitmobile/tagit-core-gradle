@@ -73,6 +73,7 @@ if (project.tasks.findByName('publish')) {
 			mavenJava(MavenPublication) {
 //				from components.web // Maven publication 'mavenJava' cannot include multiple components
 				artifact tasks.named("bootWar")
+        	}
 	    }
 	}
 	println "Boot WAR artifacts will also be published."
