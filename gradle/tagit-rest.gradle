@@ -1,4 +1,4 @@
-println "[tagit-rest] Applying TagitCore Boot WAR plug-ins, configurations and dependencies for Spring Boot applications"
+println "[tagit-rest] Applying TagitCore v7.5 Boot WAR plug-ins, configurations and dependencies for Spring Boot applications"
 
 apply plugin: "war"
 apply plugin: 'org.springframework.boot'
@@ -9,8 +9,8 @@ ext {
 	if (!project.hasProperty("tomcatVersion")) {
 	    tomcatVersion = "10.1.15"
 	}
+	println "[tagit-rest] Overriding Tomcat Version to ${tomcatVersion}"
 }
-
 
 configurations.all {
 	exclude module: 'spring-boot-starter-logging' // to replace with log4j2 and fix the exception Exception in thread "main" java.lang.StackOverflowError at org.apache.logging.log4j.util.StackLocator.getCallerClass(StackLocator.java:112)
@@ -18,8 +18,6 @@ configurations.all {
 	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
 	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-el:${tomcatVersion}"
 	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-websocket:${tomcatVersion}"
-
-	println "[tagit-rest] Overriding Tomcat Version to ${tomcatVersion}"
 }
 
 def getDate() {
