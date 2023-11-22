@@ -1,3 +1,5 @@
+println "[tagit-angular] Applying TagitCore v7.5 WAR and Node JS plug-ins and configurations for Angular builds"
+
 apply plugin: 'war'
 apply plugin: 'com.github.node-gradle.node'
 
@@ -26,18 +28,18 @@ node {
     // If false, it will try to use globally installed node.    
     download = true
 
-    println "[node] Node Version: ${version}, NPM version: ${npmVersion}"
+    println "[tagit-angular] Node Version: ${version}, NPM version: ${npmVersion}"
 	// Set the work directory for unpacking node
-	println "[node] NodeJS work directory: ${project.buildDir}/nodejs"
+	println "[tagit-angular] NodeJS work directory: ${project.buildDir}/nodejs"
     workDir = file("${project.buildDir}/nodejs")
     // Set the work directory for NPM
-	println "[node] NPM work directory: ${project.buildDir}/npm"
+	println "[tagit-angular] NPM work directory: ${project.buildDir}/npm"
     npmWorkDir = file("${project.buildDir}/npm")   
     // Set the work directory for Yarn
-	println "[node] Yarn  work directory: ${project.buildDir}/yarn"
+	println "[tagit-angular] Yarn  work directory: ${project.buildDir}/yarn"
     yarnWorkDir = file("${project.buildDir}/yarn")
 	// Set the work directory where node_modules should be located
-	println "[node] Node Modules location: ${project.projectDir}"
+	println "[tagit-angular] Node Modules location: ${project.projectDir}"
     nodeModulesDir = file("${project.projectDir}")     
 }
 
@@ -78,7 +80,7 @@ task packageNpmApp(type: Zip) {
         // optional path under which output will be visible in Java classpath, e.g. static resources path
         into 'static/web'
     }
-	println "[node] Packaged app: ${project.name}-web"
+	println "[tagit-angular] Packaged app: ${project.name}-web"
 	outputs.upToDateWhen { false }
 }
 assemble.dependsOn packageNpmApp

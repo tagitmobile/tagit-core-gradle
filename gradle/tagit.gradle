@@ -1,3 +1,5 @@
+println "[tagit] Applying common TagitCore v7.5 plug-ins, configurations and dependencies for Java applications or libraries"
+
 apply plugin: "eclipse"
 apply plugin: "project-report"
 
@@ -41,7 +43,7 @@ repositories {
 
 configurations.all {
 	resolutionStrategy.cacheChangingModulesFor 10, 'seconds'
-    resolutionStrategy.cacheDynamicVersionsFor 10, 'seconds'
+  resolutionStrategy.cacheDynamicVersionsFor 10, 'seconds'
 }
 
 configurations.runtimeClasspath {

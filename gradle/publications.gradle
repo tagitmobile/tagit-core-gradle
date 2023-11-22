@@ -1,3 +1,5 @@
+println "[publications] Applying TagitCore v7.5 plug-ins and configurations for publishing to Tagit Nexus"
+
 apply plugin: "maven-publish"
 
 // [rj.added 2023.10.30] force publishing of enforced platform WARs
@@ -5,7 +7,7 @@ tasks.withType(GenerateModuleMetadata).configureEach {
     suppressedValidationErrors.add('enforced-platform')
 }
 
-println "Note: In order to publish bootWar artifacts, please ensure `publications.gradle` is applied first before `tagit-rest.gradle`"
+println "[publications] Note: In order to publish bootWar artifacts, please ensure `publications.gradle` is applied first before `tagit-rest.gradle`"
 
 publishing {
 	publications {
@@ -27,14 +29,14 @@ publishing {
 	                password 'Tagit123'
 	            }
 	            allowInsecureProtocol = true
-	            println "Publish target will be local repository $url as $project.name:$version"
+	            println "[publications] Publish target will be local repository $url as $project.name:$version"
         	} else if (null != System.properties['partner']) {
 	            def releasesRepoUrl = "https://partner-nexus.tagitmobile.com/repository/maven-releases/"
 	            def snapshotsRepoUrl = "https://partner-nexus.tagitmobile.com/repository/maven-snapshots/"
 	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 				// please override with the proper credentials (see https://docs.gradle.org/current/samples/sample_publishing_credentials.html)
 	            credentials(PasswordCredentials)
-	            println "Publish target will be partner repository $url as $project.name:$version"
+	            println "[publications] Publish target will be partner repository $url as $project.name:$version"
         	} else if (null != System.properties['qa']) {
 	            def releasesRepoUrl = "https://nexus.tagitmobile.com/repository/maven-qa/"
 	            def snapshotsRepoUrl = "https://nexus.tagitmobile.com/repository/maven-snapshots/"
@@ -43,7 +45,7 @@ publishing {
 	                username 'gradle'
 	                password 'Tagit123'
 	            }
-	            println "Publish target will be central repository $url as $project.name:$version"
+	            println "[publications] Publish target will be central repository $url as $project.name:$version"
         	} else {
 	            def releasesRepoUrl = "https://nexus.tagitmobile.com/repository/maven-releases/"
 	            def snapshotsRepoUrl = "https://nexus.tagitmobile.com/repository/maven-snapshots/"
@@ -52,7 +54,7 @@ publishing {
 	                username 'gradle'
 	                password 'Tagit123'
 	            }
-	            println "Publish target will be central repository $url as $project.name:$version"
+	            println "[publications] Publish target will be central repository $url as $project.name:$version"
 	        }
         }
     }

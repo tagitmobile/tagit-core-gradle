@@ -1,3 +1,5 @@
+println "[tagit-rest] Applying TagitCore Boot WAR plug-ins, configurations and dependencies for Spring Boot applications"
+
 apply plugin: "war"
 apply plugin: 'org.springframework.boot'
 //apply plugin: 'io.spring.dependency-management' // [rj.commented 2021.10.07] Use Gradle's BOM support instead from tagit-core-rest
@@ -16,6 +18,8 @@ configurations.all {
 	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
 	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-el:${tomcatVersion}"
 	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-websocket:${tomcatVersion}"
+
+	println "[tagit-rest] Overriding Tomcat Version to ${tomcatVersion}"
 }
 
 def getDate() {
@@ -76,9 +80,7 @@ if (project.tasks.findByName('publish')) {
 			}
 	    }
 	}
-	println "Boot WAR artifacts will also be published."
-} else {
-	println "No Boot WAR artifacts will be published."
+	println "[tagit-rest] Detected publish task. Registering Boot WAR artifacts to be published."
 }
 
 task copyWar(type: Copy) {
