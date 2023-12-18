@@ -75,7 +75,7 @@ task packageNpmApp(type: Zip) {
     dependsOn npm_run_build
     archiveBaseName "${project.name}-web"
     extension 'jar'
-    destinationDir file("${project.buildDir}/libs")
+    destinationDirectory file("${project.buildDir}/libs")
     from('build/dist') {
         // optional path under which output will be visible in Java classpath, e.g. static resources path
         into 'static/web'
