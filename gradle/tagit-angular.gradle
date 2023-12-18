@@ -48,8 +48,7 @@ task copyMibLibrary(type: Copy) {
 	// TODO: Replace with Nexus NPM Dependencies
 	from "lib/"
 	into "node_modules/"  		
-	// outputs.upToDateWhen { false }
-	doNotTrackState("Directory contains unreadable files")
+	outputs.upToDateWhen { false }
 }
 
 npm_run_build {
@@ -65,8 +64,7 @@ npm_run_build {
 
     outputs.dir 'build'
 //    args = ['--base-href /web/', '--prod']
-	
-	// outputs.upToDateWhen { false }
+    outputs.upToDateWhen { false }
 }
 npm_run_build.dependsOn copyMibLibrary
 
@@ -81,7 +79,7 @@ task packageNpmApp(type: Zip) {
         into 'static/web'
     }
 	println "[tagit-angular] Packaged app: ${project.name}-web"
-	//outputs.upToDateWhen { false }
+	outputs.upToDateWhen { false }
 }
 assemble.dependsOn packageNpmApp
 
