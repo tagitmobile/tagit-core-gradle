@@ -31,13 +31,13 @@ node {
     println "[tagit-angular] Node Version: ${version}, NPM version: ${npmVersion}"
 	// Set the work directory for unpacking node
 	println "[tagit-angular] NodeJS work directory: ${project.buildDir}/nodejs"
-    workDir = file("${project.buildDir}/nodejs")
+    workDir = file("web-build/nodejs")
     // Set the work directory for NPM
 	println "[tagit-angular] NPM work directory: ${project.buildDir}/npm"
-    npmWorkDir = file("${project.buildDir}/npm")   
+    npmWorkDir = file("web-build/npm")   
     // Set the work directory for Yarn
 	println "[tagit-angular] Yarn  work directory: ${project.buildDir}/yarn"
-    yarnWorkDir = file("${project.buildDir}/yarn")
+    yarnWorkDir = file("web-build/yarn")
 	// Set the work directory where node_modules should be located
 	println "[tagit-angular] Node Modules location: ${project.projectDir}"
     nodeModulesDir = file("${project.projectDir}")     
@@ -62,7 +62,7 @@ npm_run_build {
     inputs.file 'package.json'
     inputs.file 'package-lock.json'
 
-    outputs.dir 'build'
+    outputs.dir 'web-build'
 //    args = ['--base-href /web/', '--prod']
     outputs.upToDateWhen { false }
 }
