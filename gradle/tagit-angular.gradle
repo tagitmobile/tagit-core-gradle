@@ -73,7 +73,7 @@ npm_run_build.dependsOn copyMibLibrary
 task packageNpmApp(type: Zip) {
 	description 'Pack NPM build output into a single JAR file'
     dependsOn npm_run_build
-    baseName "${project.name}-web"
+    archiveBaseName "${project.name}-web"
     extension 'jar'
     destinationDir file("${project.buildDir}/libs")
     from('build/dist') {
