@@ -49,6 +49,7 @@ task copyMibLibrary(type: Copy) {
 	from "lib/**"
 	into "node_modules/"  		
 	// outputs.upToDateWhen { false }
+	doNotTrackState("Directory contains unreadable files")
 }
 
 npm_run_build {
