@@ -62,7 +62,7 @@ npm_run_build {
     inputs.file 'package.json'
     inputs.file 'package-lock.json'
 
-    outputs.dir 'web-build'
+    outputs.dir 'build'
 //    args = ['--base-href /web/', '--prod']
     outputs.upToDateWhen { false }
 }
