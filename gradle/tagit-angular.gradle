@@ -1,5 +1,5 @@
 println "[tagit-angular] Applying TagitCore v7.5 WAR and Node JS plug-ins and configurations for Angular builds"
-apply plugin: 'base'
+
 apply plugin: 'war'
 apply plugin: 'com.github.node-gradle.node'
 
