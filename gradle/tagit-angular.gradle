@@ -46,10 +46,9 @@ node {
 task copyMibLibrary(type: Copy) {
 	description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
 	// TODO: Replace with Nexus NPM Dependencies
-    from "lib/**"
+	from "lib/**"
 	into "node_modules/"  		
 	// outputs.upToDateWhen { false }
-	doNotTrackState("Instrumentation needs to re-run every time")
 }
 
 npm_run_build {
@@ -66,8 +65,7 @@ npm_run_build {
     outputs.dir 'build'
 //    args = ['--base-href /web/', '--prod']
 	
-	// outputs.upToDateWhen { false }	
-	doNotTrackState("Instrumentation needs to re-run every time")
+	// outputs.upToDateWhen { false }
 }
 npm_run_build.dependsOn copyMibLibrary
 
