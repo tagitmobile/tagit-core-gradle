@@ -81,7 +81,6 @@ task packageNpmApp(type: Zip) {
     }
 	println "[tagit-angular] Packaged app: ${project.name}-web"
 	//outputs.upToDateWhen { false }
-	doNotTrackState("Instrumentation needs to re-run every time")
 }
 assemble.dependsOn packageNpmApp
 
