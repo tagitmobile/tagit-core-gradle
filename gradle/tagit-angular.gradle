@@ -48,7 +48,8 @@ task copyMibLibrary(type: Copy) {
 	// TODO: Replace with Nexus NPM Dependencies
     from "lib/**"
 	into "node_modules/"  		
-	outputs.upToDateWhen { false }
+	// outputs.upToDateWhen { false }
+	doNotTrackState("Instrumentation needs to re-run every time")
 }
 
 npm_run_build {
