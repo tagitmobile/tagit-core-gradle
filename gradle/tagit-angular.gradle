@@ -1,5 +1,5 @@
 println "[tagit-angular] Applying TagitCore v7.5 WAR and Node JS plug-ins and configurations for Angular builds"
-
+apply plugin: 'base'
 apply plugin: 'war'
 apply plugin: 'com.github.node-gradle.node'
 
@@ -70,9 +70,10 @@ npm_run_build.dependsOn copyMibLibrary
 
 // pack output of the build into JAR file
 task packageNpmApp(type: Zip) {
-	description 'Pack NPM build output into a single JAR file'
+    description 'Pack NPM build output into a single JAR file'
     dependsOn npm_run_build
-    archiveBaseName = "${project.name}-web.jar"
+    archiveBaseName = "${project.name}-web"
+    archiveExtension 'jar'
     destinationDirectory = file("${project.buildDir}/libs")
     from('build/dist') {
         // optional path under which output will be visible in Java classpath, e.g. static resources path
