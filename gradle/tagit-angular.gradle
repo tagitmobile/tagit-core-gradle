@@ -46,7 +46,7 @@ node {
 task copyMibLibrary(type: Copy) {
 	description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
 	// TODO: Replace with Nexus NPM Dependencies
-	from "lib/**"
+	from "lib/"
 	into "node_modules/"  		
 	// outputs.upToDateWhen { false }
 	doNotTrackState("Directory contains unreadable files")
