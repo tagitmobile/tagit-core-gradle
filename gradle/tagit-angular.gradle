@@ -66,7 +66,8 @@ npm_run_build {
     outputs.dir 'build'
 //    args = ['--base-href /web/', '--prod']
 	
-	outputs.upToDateWhen { false }	
+	// outputs.upToDateWhen { false }	
+	doNotTrackState("Instrumentation needs to re-run every time")
 }
 npm_run_build.dependsOn copyMibLibrary
 
@@ -81,7 +82,8 @@ task packageNpmApp(type: Zip) {
         into 'static/web'
     }
 	println "[tagit-angular] Packaged app: ${project.name}-web"
-	outputs.upToDateWhen { false }
+	//outputs.upToDateWhen { false }
+	doNotTrackState("Instrumentation needs to re-run every time")
 }
 assemble.dependsOn packageNpmApp
 
