@@ -7,7 +7,7 @@ apply plugin: 'org.springframework.boot'
 ext {
 	// default a tomcat version
 	if (!project.hasProperty("tomcatVersion")) {
-	    tomcatVersion = "10.1.16"
+	    tomcatVersion = "10.1.17"
 	}
 	println "[tagit-rest] Overriding Tomcat Version to ${tomcatVersion}"
 }
