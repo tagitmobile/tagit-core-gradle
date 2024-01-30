@@ -66,10 +66,10 @@ javadoc {
   classpath = configurations.compileClasspath // ensure your dependencies are using compileClasspath
   destinationDir = file('javadoc/')
   exclude "**/*.md"
-//  exclude "**/domain/**"
-  title = "${projectName} v" + version
-  // options.overview = "src/main/javadoc/overview.html"
-  options.stylesheetFile = new File(projectDir, "src/main/javadoc/styles.css");
+// exclude "**/domain/**"
+title = "${projectName} v" + version
+// options.overview = "src/main/javadoc/overview.html"
+options.stylesheetFile = new File(projectDir, "src/main/javadoc/styles.css");
 }
 
 // [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
