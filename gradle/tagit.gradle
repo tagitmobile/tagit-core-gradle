@@ -68,7 +68,7 @@ javadoc {
   exclude "**/*.md"
 //  exclude "**/domain/**"
   title = "${projectName} v" + version
-  options.overview = "src/main/javadoc/overview.html"
+  // options.overview = "src/main/javadoc/overview.html"
   options.stylesheetFile = new File(projectDir, "src/main/javadoc/styles.css");
 }
 
