@@ -69,7 +69,7 @@ javadoc {
 // exclude "**/domain/**"
 title = "${projectName} v" + version
 options.overview = "src/main/javadoc/overview.html"
-options.stylesheetFile = new File(projectDir, "src/main/javadoc/styles.css");
+// options.stylesheetFile = new File(projectDir, "src/main/javadoc/styles.css");
 }
 
 // [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
