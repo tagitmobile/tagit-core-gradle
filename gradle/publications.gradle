@@ -11,11 +11,19 @@ println "[publications] Note: In order to publish bootWar artifacts, please ensu
 
 publishing {
 	publications {
-        mavenJava(MavenPublication) {
-            from components.java
-     		artifact sourcesJar
-			artifact javadocJar
-        }
+		if (pluginManager.withPlugin('ivy-publish')) {
+			println "[publications] Publishing Java platform artifacts"
+			mavenJava(MavenPublication) {
+				from components.javaPlatform
+			}
+		} else {
+			println "[publications] Publishing Java application or library artifacts"
+			mavenJava(MavenPublication) {
+				from components.java
+				artifact sourcesJar
+				artifact javadocJar
+			}
+		}
     }
     repositories {
         maven {
