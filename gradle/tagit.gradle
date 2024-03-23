@@ -107,7 +107,7 @@ if (project.tasks.findByName('javadoc')) {
   }  
 }
 
-if (project.tasks.findByName('classes')) {
+if (project.hasProperty('classes')) {
   // [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
   task sourcesJar(type: Jar, dependsOn: classes) {
       description 'Packages all sources into a single sources JAR for source code publishing and debugging purposes'
@@ -117,7 +117,7 @@ if (project.tasks.findByName('classes')) {
   }
 }
 
-if (project.tasks.findByName('testClasses')) {
+if (project.hasProperty('testClasses')) {
   // [Parthi.added 2021.12.08] For test project dependency 
   task testJar(type: Jar, dependsOn: testClasses) {
       archiveClassifier = 'test'
@@ -127,13 +127,13 @@ if (project.tasks.findByName('testClasses')) {
 }
 
 artifacts {
-    if (project.tasks.findByName('classes')) {
+    if (project.hasProperty('classes')) {
       archives sourcesJar
     }
     if (project.tasks.findByName('javadoc')) {
       archives javadocJar
     }
-    if (project.tasks.findByName('testClasses')) {
+    if (project.hasProperty('testClasses')) {
       testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
     }
 }
