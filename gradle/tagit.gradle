@@ -16,8 +16,6 @@ if (project.tasks.findByName('sonarqube')) {
   }
 }
 
-apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/tagit.gradle"
-
 repositories {
   // [rj.added 2024.03.23] added support for cloud instances			
 	if (null != System.properties['partner-cloud']) {
