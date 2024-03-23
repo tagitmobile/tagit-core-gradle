@@ -90,7 +90,11 @@ configurations {
 // use the built-in java task instead of creating a new genDoc javadoc task
 if (project.tasks.findByName('javadoc')) {
   javadoc { 
-    source = delombok // delombok [rj.added 2020.04.18] allow JavaDocs on delombok'd code
+    if (project.tasks.findByName('delombok')) {
+      source = delombok // delombok [rj.added 2020.04.18] allow JavaDocs on delombok'd code
+    } else {
+      source = sourceSets.main.allJava
+    }
     classpath = configurations.compileClasspath // ensure your dependencies are using compileClasspath
     destinationDir = file('javadoc/')
     exclude "**/*.md"
