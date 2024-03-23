@@ -15,18 +15,40 @@ sonarqube {
 }
 
 repositories {
+  // [rj.added 2024.03.23] added support for cloud instances			
+	if (null != System.properties['partner-cloud']) {
+		println "Using partner-cloud public repository maven-public" 
+    maven {
+			url 'https://partner-nexus-cloud.tagitmobile.com/repository/maven-public/'
+	    credentials {
+                username project.nexusUser
+                password project.nexusPassword
+	   	}		
+    } 
+  }
+	else if (null != System.properties['cloud']) {
+		println "Using cloud public repository maven-public" 
+    maven {
+			url 'https://nexus-cloud.tagitmobile.com/repository/maven-public/'
+	    credentials {
+                username project.nexusUser
+                password project.nexusPassword
+	   	}		
+    }
+  }
 	// [rj.added 2023.06.27] secure nexus repository for partner use
-	if (null != System.properties['partner']) {
+	else if (null != System.properties['partner']) {
 		println "Using partner public repository maven-public" 
-	    maven {
+    maven {
 			url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
 	    credentials {
                 username project.nexusUser
                 password project.nexusPassword
 	   	}		
-		}
+    }
+  }
 	// [rj.added 2020.06.04] local nexus repository for offline work
-	} else if (null != System.properties['local']) {
+	else if (null != System.properties['local']) {
 		println "Using local public repository local-maven-public (maven-public + tagit-maven-public)" 
 	    maven {
 			url 'http://localhost:8081/repository/local-maven-public/'
@@ -34,11 +56,11 @@ repositories {
 		}	
 	} else {
 		// [rj.added 2020.04.22] pull from Tagit Nexus Maven repository
-	    maven {
+    maven {
 			url 'https://nexus.tagitmobile.com/repository/maven-public/'  
 	    }
-		mavenCentral()
 	}
+  mavenCentral()
 }
 
 configurations.all {
