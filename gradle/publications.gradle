@@ -20,8 +20,10 @@ publishing {
 			println "[publications] Publishing Java application or library artifacts"
 			mavenJava(MavenPublication) {
 				from components.java
-				artifact sourcesJar
-				artifact javadocJar
+				if (project.hasProperty('sourcesJar'))
+					artifact sourcesJar
+				if (project.hasProperty('javadocJar'))
+					artifact javadocJar
 			}
 		}
     }
