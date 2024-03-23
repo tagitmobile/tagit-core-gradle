@@ -8,10 +8,10 @@ apply plugin: "project-report"
 if (project.tasks.findByName('sonarqube')) {
   sonarqube {
     properties {
-      property "sonar.host.url", "https://sonarqube.tagitmobile.com"
+      property "sonar.host.url", "https://sonarqube-cloud.tagitmobile.com"
       //CI-CD Tools Credentials 
-          property "sonar.login", "gradle"
-          property "sonar.password", "Tagit123"
+      property "sonar.login", "gradle"
+      property "sonar.password", "Tagit123"
     }
   }
 }
