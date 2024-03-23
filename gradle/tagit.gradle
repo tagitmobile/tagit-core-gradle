@@ -5,13 +5,15 @@ apply plugin: "project-report"
 
 //apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
 
-sonarqube {
-	properties {
-		property "sonar.host.url", "https://sonarqube.tagitmobile.com"
-		//CI-CD Tools Credentials 
-        property "sonar.login", "gradle"
-        property "sonar.password", "Tagit123"
-	}
+if (project.tasks.findByName('sonarqube')) {
+  sonarqube {
+    properties {
+      property "sonar.host.url", "https://sonarqube.tagitmobile.com"
+      //CI-CD Tools Credentials 
+          property "sonar.login", "gradle"
+          property "sonar.password", "Tagit123"
+    }
+  }
 }
 
 repositories {
@@ -85,15 +87,24 @@ configurations {
 }
 
 // use the built-in java task instead of creating a new genDoc javadoc task
-javadoc { 
-  source = delombok // delombok [rj.added 2020.04.18] allow JavaDocs on delombok'd code
-  classpath = configurations.compileClasspath // ensure your dependencies are using compileClasspath
-  destinationDir = file('javadoc/')
-  exclude "**/*.md"
-// exclude "**/domain/**"
-title = "${projectName} v" + version
-options.overview = "src/main/javadoc/overview.html"
-// options.stylesheetFile = new File(projectDir, "src/main/javadoc/styles.css"); Parthi: commented as the style is affected
+if (project.tasks.findByName('javadoc')) {
+  javadoc { 
+    source = delombok // delombok [rj.added 2020.04.18] allow JavaDocs on delombok'd code
+    classpath = configurations.compileClasspath // ensure your dependencies are using compileClasspath
+    destinationDir = file('javadoc/')
+    exclude "**/*.md"
+  // exclude "**/domain/**"
+  title = "${projectName} v" + version
+  options.overview = "src/main/javadoc/overview.html"
+  // options.stylesheetFile = new File(projectDir, "src/main/javadoc/styles.css"); Parthi: commented as the style is affected
+  }
+
+  // [rj.added 2020.04.19] tagit-cores-x.y.z-javadoc.jar
+  task javadocJar(type: Jar, dependsOn: javadoc) {
+      description 'Packages javadoc output into a single sources JAR for publishing purposes'
+      archiveClassifier = 'javadoc'
+      from javadoc.destinationDir
+  }  
 }
 
 // [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
@@ -104,12 +115,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
-// [rj.added 2020.04.19] tagit-cores-x.y.z-javadoc.jar
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    description 'Packages javadoc output into a single sources JAR for publishing purposes'
-    archiveClassifier = 'javadoc'
-    from javadoc.destinationDir
-}
+
 
 // [Parthi.added 2021.12.08] For test project dependency 
 task testJar(type: Jar, dependsOn: testClasses) {
@@ -120,7 +126,9 @@ task testJar(type: Jar, dependsOn: testClasses) {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
+    if (project.tasks.findByName('javadoc')) {
+      archives javadocJar
+    }
     testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
 }
 
@@ -132,11 +140,17 @@ task cleanDeploy(type:Delete) {
 cleanDeploy.dependsOn clean
 
 task copyJar(type: Copy) {
-    from jar, sourcesJar, javadocJar
+    if (project.tasks.findByName('javadoc')) {
+      from jar, sourcesJar, javadocJar
+    } else {
+      from jar, sourcesJar
+    }
     into "deploy"
 }
 copyJar.dependsOn sourcesJar
-copyJar.dependsOn javadocJar
+if (project.tasks.findByName('javadoc')) {
+  copyJar.dependsOn javadocJar
+}
 
 compileJava {
     options.compilerArgs << '-parameters'
