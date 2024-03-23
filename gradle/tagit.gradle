@@ -68,13 +68,15 @@ configurations.all {
   resolutionStrategy.cacheDynamicVersionsFor 10, 'seconds'
 }
 
-configurations.runtimeClasspath {
-	// [rj.added 2020.06.10] to prevent spillage of testing classes to run-time (added as API to simplify development)
-	exclude group: 'org.junit.jupiter'
-	exclude group: 'org.mockito'
-	exclude group: 'org.hamcrest'		
-	exclude group: 'junit'
-	// exclude module: 'filterext'
+if (configurations.findByName('runtimeClasspath')) {
+  configurations.runtimeClasspath {
+    // [rj.added 2020.06.10] to prevent spillage of testing classes to run-time (added as API to simplify development)
+    exclude group: 'org.junit'
+    exclude group: 'org.mockito'
+    exclude group: 'org.hamcrest'		
+    exclude group: 'junit'
+    // exclude module: 'filterext'
+  }
 }
 
 // [Parthi.added 2021.12.08] For test project dependency 
