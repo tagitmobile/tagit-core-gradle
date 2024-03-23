@@ -16,6 +16,8 @@ if (project.tasks.findByName('sonarqube')) {
   }
 }
 
+apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/tagit.gradle"
+
 repositories {
   // [rj.added 2024.03.23] added support for cloud instances			
 	if (null != System.properties['partner-cloud']) {
@@ -86,6 +88,7 @@ configurations {
     testArtifacts.extendsFrom testCompile
 }
 
+
 // use the built-in java task instead of creating a new genDoc javadoc task
 if (project.tasks.findByName('javadoc')) {
   javadoc { 
@@ -107,35 +110,27 @@ if (project.tasks.findByName('javadoc')) {
   }  
 }
 
-if (project.hasProperty('classes')) {
-  // [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
-  task sourcesJar(type: Jar, dependsOn: classes) {
-      description 'Packages all sources into a single sources JAR for source code publishing and debugging purposes'
-      duplicatesStrategy = 'include'
-      archiveClassifier = 'sources'
-      from sourceSets.main.allSource
-  }
+// [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
+task sourcesJar(type: Jar, dependsOn: classes) {
+    description 'Packages all sources into a single sources JAR for source code publishing and debugging purposes'
+    duplicatesStrategy = 'include'
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
 }
 
-if (project.hasProperty('testClasses')) {
-  // [Parthi.added 2021.12.08] For test project dependency 
-  task testJar(type: Jar, dependsOn: testClasses) {
-      archiveClassifier = 'test'
-  //    archiveBaseName = "${project.archivesBaseName}-test"
-      from sourceSets.test.output
-  }
+// [Parthi.added 2021.12.08] For test project dependency 
+task testJar(type: Jar, dependsOn: testClasses) {
+    archiveClassifier = 'test'
+//    archiveBaseName = "${project.archivesBaseName}-test"
+    from sourceSets.test.output
 }
 
 artifacts {
-    if (project.hasProperty('classes')) {
-      archives sourcesJar
-    }
+    archives sourcesJar
     if (project.tasks.findByName('javadoc')) {
       archives javadocJar
     }
-    if (project.hasProperty('testClasses')) {
-      testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
-    }
+    testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
 }
 
 
