@@ -11,7 +11,7 @@ println "[publications] Note: In order to publish bootWar artifacts, please ensu
 
 publishing {
 	publications {
-		if (pluginManager.withPlugin('ivy-publish')) {
+		if (pluginManager.hasPlugin('java-platform')) {
 			println "[publications] Publishing Java platform artifacts"
 			mavenJava(MavenPublication) {
 				from components.javaPlatform
