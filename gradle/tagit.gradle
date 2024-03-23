@@ -107,30 +107,37 @@ if (project.tasks.findByName('javadoc')) {
   }  
 }
 
-// [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
-task sourcesJar(type: Jar, dependsOn: classes) {
-    description 'Packages all sources into a single sources JAR for debugging purposes'
-    duplicatesStrategy = 'include'
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
+if (project.tasks.findByName('classes')) {
+  // [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
+  task sourcesJar(type: Jar, dependsOn: classes) {
+      description 'Packages all sources into a single sources JAR for source code publishing and debugging purposes'
+      duplicatesStrategy = 'include'
+      archiveClassifier = 'sources'
+      from sourceSets.main.allSource
+  }
 }
 
-
-
-// [Parthi.added 2021.12.08] For test project dependency 
-task testJar(type: Jar, dependsOn: testClasses) {
-    archiveClassifier = 'test'
-//    archiveBaseName = "${project.archivesBaseName}-test"
-    from sourceSets.test.output
+if (project.tasks.findByName('testClasses')) {
+  // [Parthi.added 2021.12.08] For test project dependency 
+  task testJar(type: Jar, dependsOn: testClasses) {
+      archiveClassifier = 'test'
+  //    archiveBaseName = "${project.archivesBaseName}-test"
+      from sourceSets.test.output
+  }
 }
 
 artifacts {
-    archives sourcesJar
+    if (project.tasks.findByName('classes')) {
+      archives sourcesJar
+    }
     if (project.tasks.findByName('javadoc')) {
       archives javadocJar
     }
-    testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
+    if (project.tasks.findByName('testClasses')) {
+      testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
+    }
 }
+
 
 //[Parthi. added 06-05-2022 for deleting deply folder]
 task cleanDeploy(type:Delete) {
