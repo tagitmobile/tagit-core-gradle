@@ -7,8 +7,8 @@ repositories {
     maven {
 			url 'https://partner-nexus-cloud.tagitmobile.com/repository/maven-public/'
 	    credentials {
-                username project.nexusUser
-                password project.nexusPassword
+        username project.nexusUser
+        password project.nexusPassword
 	   	}		
     } 
   }
@@ -16,10 +16,6 @@ repositories {
 		println "Using cloud public repository maven-public" 
     maven {
 			url 'https://nexus-cloud.tagitmobile.com/repository/maven-public/'
-	    credentials {
-                username project.nexusUser
-                password project.nexusPassword
-	   	}		
     }
   }
 	// [rj.added 2023.06.27] secure nexus repository for partner use
@@ -28,8 +24,8 @@ repositories {
     maven {
 			url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
 	    credentials {
-                username project.nexusUser
-                password project.nexusPassword
+        username project.nexusUser
+        password project.nexusPassword
 	   	}		
     }
   }
@@ -44,7 +40,7 @@ repositories {
 		// [rj.added 2020.04.22] pull from Tagit Nexus Maven repository
     maven {
 			url 'https://nexus.tagitmobile.com/repository/maven-public/'  
-	    }
+    }
 	}
   mavenCentral()
 }
