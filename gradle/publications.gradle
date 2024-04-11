@@ -50,7 +50,7 @@ publishing {
 					username project.nexusUser
 					password project.nexusPassword
 				} 
-	            println "[publications] Publish target will be partner repository $url as $project.name:$version"
+	            println "[publications] Publish target will be partner cloud repository $url as $project.name:$version"
         	} 
 			else if (null != System.properties['cloud']) {
 	            def releasesRepoUrl = "https://nexus-cloud.tagitmobile.com/repository/maven-releases/"
@@ -60,7 +60,7 @@ publishing {
 					username project.nexusUser
 					password project.nexusPassword
 				} 
-	            println "[publications] Publish target will be partner repository $url as $project.name:$version"
+	            println "[publications] Publish target will be cloud repository $url as $project.name:$version"
         	} 
 			else if (null != System.properties['cloud-qa']) {
 	            def releasesRepoUrl = "https://nexus-cloud.tagitmobile.com/repository/maven-qa/"
@@ -70,8 +70,28 @@ publishing {
 					username project.nexusUser
 					password project.nexusPassword
 				} 
-	            println "[publications] Publish target will be partner repository $url as $project.name:$version"
+	            println "[publications] Publish target will be cloud QA repository $url as $project.name:$version"
         	} 
+			else if (null != System.properties['onprem']) {
+	            def releasesRepoUrl = "https://nexus-onprem.tagitmobile.com/repository/maven-releases/"
+	            def snapshotsRepoUrl = "https://nexus-onprem.tagitmobile.com/repository/maven-snapshots/"
+	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+				credentials {
+					username project.nexusUser
+					password project.nexusPassword
+				} 
+	            println "[publications] Publish target will be onprem repository $url as $project.name:$version"
+        	} 	
+			else if (null != System.properties['poc']) {
+	            def releasesRepoUrl = "https://nexus-poc.tagitmobile.com/repository/maven-releases/"
+	            def snapshotsRepoUrl = "https://nexus-poc.tagitmobile.com/repository/maven-snapshots/"
+	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+				credentials {
+					username project.nexusUser
+					password project.nexusPassword
+				} 
+	            println "[publications] Publish target will be POC repository $url as $project.name:$version"
+        	} 					
 			else if (null != System.properties['partner']) {
 	            def releasesRepoUrl = "https://partner-nexus.tagitmobile.com/repository/maven-releases/"
 	            def snapshotsRepoUrl = "https://partner-nexus.tagitmobile.com/repository/maven-snapshots/"
