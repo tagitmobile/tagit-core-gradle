@@ -35,8 +35,8 @@ publishing {
 	            def snapshotsRepoUrl = "http://localhost:8081/repository/maven-snapshots/"
 	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 				credentials {
-					username project.nexusUser
-					password project.nexusPassword
+					username 'gradle'
+					password 'Tagit123'
 				} 
 	            allowInsecureProtocol = true
 	            println "[publications] Publish target will be local repository $url as $project.name:$version"
