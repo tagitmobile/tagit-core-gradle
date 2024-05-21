@@ -218,21 +218,21 @@ eclipse {
   	
   project {
    
-    resourceFilter {
-        matcher {
-            id = 'org.eclipse.core.resources.regexFilterMatcher'
-            arguments = "node_modules|.git"
-        }
-    }
+    // resourceFilter {
+    //     matcher {
+    //         id = 'org.eclipse.core.resources.regexFilterMatcher'
+    //         arguments = "node_modules|.git"
+    //     }
+    // }
     //if you don't want any node_modules folder to appear in Eclipse, you can filter it out:
-    resourceFilter {
-      appliesTo = 'FOLDERS'
-      type = 'EXCLUDE_ALL'
-      matcher {
-        id = 'org.eclipse.ui.ide.multiFilter'
-        arguments = '1.0-name-matches-false-false-node_modules'
-      }
-    }
+    // resourceFilter {
+    //   appliesTo = 'FOLDERS'
+    //   type = 'EXCLUDE_ALL'
+    //   matcher {
+    //     id = 'org.eclipse.ui.ide.multiFilter'
+    //     arguments = '1.0-name-matches-false-false-node_modules'
+    //   }
+    // }
 
     // resourceFilter {
     //   appliesTo = 'FOLDERS'
@@ -243,22 +243,22 @@ eclipse {
     //   }
     // }
 	
-    resourceFilter {
-      appliesTo = 'FOLDERS'
-      type = 'EXCLUDE_ALL'
-      matcher {
-        id = 'org.eclipse.ui.ide.multiFilter'
-        arguments = '1.0-name-matches-false-false-build'
-      }
-    }	
-    resourceFilter {
-      appliesTo = 'FOLDERS'
-      type = 'EXCLUDE_ALL'
-      matcher {
-        id = 'org.eclipse.ui.ide.multiFilter'
-        arguments = '1.0-name-matches-false-false-javadoc'
-      }
-    }	
+    // resourceFilter {
+    //   appliesTo = 'FOLDERS'
+    //   type = 'EXCLUDE_ALL'
+    //   matcher {
+    //     id = 'org.eclipse.ui.ide.multiFilter'
+    //     arguments = '1.0-name-matches-false-false-build'
+    //   }
+    // }	
+    // resourceFilter {
+    //   appliesTo = 'FOLDERS'
+    //   type = 'EXCLUDE_ALL'
+    //   matcher {
+    //     id = 'org.eclipse.ui.ide.multiFilter'
+    //     arguments = '1.0-name-matches-false-false-javadoc'
+    //   }
+    // }	
 
 	file {
 		withXml {
