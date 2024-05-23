@@ -217,41 +217,48 @@ eclipse {
   }
   	
   project {   
-    //if you don't want any node_modules folder to appear in Eclipse, you can filter it out:
+   //Parthi : Added for increasing sync speed in vscode Refer : https://github.com/redhat-developer/vscode-java/issues/1362
     resourceFilter {
-      appliesTo = 'FOLDERS'
-      type = 'EXCLUDE_ALL'
-      matcher {
-        id = 'org.eclipse.ui.ide.multiFilter'
-        arguments = '1.0-name-matches-false-false-node_modules'
-      }
+        matcher {
+            id = 'org.eclipse.core.resources.regexFilterMatcher'
+            arguments = "node_modules|.git|build|javadoc"
+        }
     }
-
+    // //if you don't want any node_modules folder to appear in Eclipse, you can filter it out:
     // resourceFilter {
     //   appliesTo = 'FOLDERS'
     //   type = 'EXCLUDE_ALL'
     //   matcher {
     //     id = 'org.eclipse.ui.ide.multiFilter'
-    //     arguments = '1.0-name-matches-false-false-bin'
+    //     arguments = '1.0-name-matches-false-false-node_modules'
     //   }
     // }
+
+    // // resourceFilter {
+    // //   appliesTo = 'FOLDERS'
+    // //   type = 'EXCLUDE_ALL'
+    // //   matcher {
+    // //     id = 'org.eclipse.ui.ide.multiFilter'
+    // //     arguments = '1.0-name-matches-false-false-bin'
+    // //   }
+    // // }
 	
-    resourceFilter {
-      appliesTo = 'FOLDERS'
-      type = 'EXCLUDE_ALL'
-      matcher {
-        id = 'org.eclipse.ui.ide.multiFilter'
-        arguments = '1.0-name-matches-false-false-build'
-      }
-    }	
-    resourceFilter {
-      appliesTo = 'FOLDERS'
-      type = 'EXCLUDE_ALL'
-      matcher {
-        id = 'org.eclipse.ui.ide.multiFilter'
-        arguments = '1.0-name-matches-false-false-javadoc'
-      }
-    }	
+    // resourceFilter {
+    //   appliesTo = 'FOLDERS'
+    //   type = 'EXCLUDE_ALL'
+    //   matcher {
+    //     id = 'org.eclipse.ui.ide.multiFilter'
+    //     arguments = '1.0-name-matches-false-false-build'
+    //   }
+    // }	
+    // resourceFilter {
+    //   appliesTo = 'FOLDERS'
+    //   type = 'EXCLUDE_ALL'
+    //   matcher {
+    //     id = 'org.eclipse.ui.ide.multiFilter'
+    //     arguments = '1.0-name-matches-false-false-javadoc'
+    //   }
+    // }	
 
 	file {
 		withXml {
