@@ -221,7 +221,7 @@ eclipse {
     resourceFilter {
         matcher {
             id = 'org.eclipse.core.resources.regexFilterMatcher'
-            arguments = "node_modules|.git|build|javadoc"
+            arguments = "node_modules|.git|javadoc"
         }
     }
     // //if you don't want any node_modules folder to appear in Eclipse, you can filter it out:
