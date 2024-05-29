@@ -97,7 +97,8 @@ if (configurations.findByName('runtimeClasspath')) {
 
 // [Parthi.added 2021.12.08] For test project dependency 
 configurations {
-    testArtifacts.extendsFrom testCompile
+	//testArtifacts.extendsFrom testCompile
+	testArtifacts.extendsFrom testRuntime
 }
 
 
