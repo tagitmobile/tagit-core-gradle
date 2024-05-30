@@ -24,6 +24,10 @@ publishing {
 					artifact sourcesJar
 				if (project.hasProperty('javadocJar'))
 					artifact javadocJar
+				if (project.hasProperty('javadocJar'))
+					artifact javadocJar
+				if (project.hasProperty('bootJar'))
+					artifact bootJar
 			}
 		}
     }
