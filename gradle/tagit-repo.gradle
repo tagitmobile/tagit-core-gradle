@@ -36,15 +36,26 @@ repositories {
 				url 'https://nexus-poc.tagitmobile.com/repository/test-maven-public/'
 		}
 	}		
+	// [rj.added 2024.06.04] secure nexus repository for services use
+	else if (null != System.properties['services']) {
+		println "Using services public repository maven-public" 
+		maven {
+				url 'https://services-nexus.tagitmobile.com/repository/maven-public/'
+				credentials {
+					username project.nexusUser
+					password project.nexusPassword
+				}		
+		}
+	}
 	// [rj.added 2023.06.27] secure nexus repository for partner use
 	else if (null != System.properties['partner']) {
 		println "Using partner public repository maven-public" 
 		maven {
 				url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
-			credentials {
-			username project.nexusUser
-			password project.nexusPassword
-			}		
+				credentials {
+					username project.nexusUser
+					password project.nexusPassword
+				}		
 		}
 	}
 	// [rj.added 2020.06.04] local nexus repository for offline work

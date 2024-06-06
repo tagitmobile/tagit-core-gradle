@@ -91,7 +91,19 @@ publishing {
 					password project.nexusPassword
 				} 
 	            println "[publications] Publish target will be POC repository $url as $project.name:$version"
-        	} 					
+        	} 				
+			// [rj.added 2024.06.04] secure nexus repository for services use
+			else if (null != System.properties['services']) {
+	            def releasesRepoUrl = "https://services-nexus.tagitmobile.com/repository/maven-releases/"
+	            def snapshotsRepoUrl = "https://services-nexus.tagitmobile.com/repository/maven-snapshots/"
+	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+				// please override with the proper credentials (see https://docs.gradle.org/current/samples/sample_publishing_credentials.html)
+				credentials {
+					username project.nexusUser
+					password project.nexusPassword
+				} 
+	            println "[publications] Publish target will be partner repository $url as $project.name:$version"
+			}				
 			else if (null != System.properties['partner']) {
 	            def releasesRepoUrl = "https://partner-nexus.tagitmobile.com/repository/maven-releases/"
 	            def snapshotsRepoUrl = "https://partner-nexus.tagitmobile.com/repository/maven-snapshots/"
