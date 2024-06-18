@@ -222,8 +222,8 @@ def getDate() {
 }
 
 def removeSnapshot(String version) {
-    if (version.endsWith("-SNAPSHOT")) {
-        return version.substring(0, version.length() - "-SNAPSHOT".length())
+    if (version.trim().endsWith("-SNAPSHOT")) {
+        return version.trim().substring(0, version.trim().length() - "-SNAPSHOT".length())
     }
     return version
 }
