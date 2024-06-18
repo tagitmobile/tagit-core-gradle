@@ -29,6 +29,14 @@ if (project.tasks.findByName('sonarqube')) {
 			property("sonar.projectName", "${project.name}-${removeSnapshot(project.version)}")
     }
   }
+
+	task printSonarProperties {
+		doLast {
+			println "[sonarqube] Project Name: " + "${project.tasks['sonarqube'].properties['sonar.projectName'].get()}"
+			println "[sonarqube] Project Key: " + "${project.tasks['sonarqube'].properties['sonar.projectKey'].get()}"
+		}
+	}
+	project.tasks["sonar"].dependsOn "printSonarProperties"  
 }
 
 repositories {
