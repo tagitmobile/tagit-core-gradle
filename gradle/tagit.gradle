@@ -9,7 +9,7 @@ if (project.tasks.findByName('sonarqube')) {
   sonarqube {
     properties {
 
-			def productPackages = ["com.mobeix", "com.tagit.digital", "com.tagit.mdb.feature",
+			def productPackages = ["com.mobeix", "com.tagit.commons", "com.tagit.digital", "com.tagit.mdb.feature",
 							"com.tagit.mcb.services", "com.tagit.mcb.web", "com.tagit.mcb.admin", "com.tagit.mcb.component",
 							"com.tagit.mrb.services", "com.tagit.mrb.web", "com.tagit.mrb.admin", "com.tagit.mrb.component" ]
 
