@@ -8,10 +8,25 @@ apply plugin: "project-report"
 if (project.tasks.findByName('sonarqube')) {
   sonarqube {
     properties {
-      property "sonar.host.url", "https://sonarqube-cloud.tagitmobile.com"
-      //CI-CD Tools Credentials 
-      property "sonar.login", "gradle"
-      property "sonar.password", "Tagit123"
+
+			def productPackages = ["com.mobeix", "com.tagit.digital", "com.tagit.mdb.feature",
+							"com.tagit.mcb.services", "com.tagit.mcb.web", "com.tagit.mcb.admin", "com.tagit.mcb.component",
+							"com.tagit.mrb.services", "com.tagit.mrb.web", "com.tagit.mrb.admin", "com.tagit.mrb.component" ]
+
+			if ( productPackages.any { pckg -> group.startsWith(pckg) } ) {
+				println "[sonarqube] Using Product SonarQube server for '${group}' package."
+				property "sonar.host.url", "https://sonarqube-cloud.tagitmobile.com"
+        // Default CI-CD tools credentials 
+        property "sonar.login", "squ_f4caa57be81d3fc0e599c550e093ba4b657b0df7"
+			} else {
+				println "[sonarqube] Using Services SonarQube server for '${group}' package."
+				property "sonar.host.url", "https://sonarqube-services.tagitmobile.com"
+        property "sonar.login", "01a86c235e09af8e5cee2260718e590295c6a933"        
+			}
+
+      // [rj.added 2024.06.18] follow the https://edocs1.tagitmobile.com/confluence/pages/viewpage.action?spaceKey=PPDG&title=Code+Quality+Guidelines
+    	property("sonar.projectKey", "${group}:${rootProject.name}${project.path}:${removeSnapshot(project.version)}")
+			property("sonar.projectName", "${project.name}-${removeSnapshot(project.version)}")
     }
   }
 }
@@ -196,6 +211,13 @@ jar {
 
 def getDate() {
     return new Date().format('yyyyMMddHHmmss')
+}
+
+def removeSnapshot(String version) {
+    if (version.endsWith("-SNAPSHOT")) {
+        return version.substring(0, version.length() - "-SNAPSHOT".length())
+    }
+    return version
 }
 
 build.dependsOn copyJar
