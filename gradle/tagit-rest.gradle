@@ -74,7 +74,10 @@ if (project.tasks.findByName('publish')) {
 			// }
 			mavenJava(MavenPublication) {
 //				from components.web // Maven publication 'mavenJava' cannot include multiple components
-				artifact tasks.named("bootWar")
+				if (project.hasProperty('bootWar'))
+					artifact tasks.named("bootWar")
+				if (project.hasProperty('bootJar'))
+					artifact tasks.named("bootJar")
 			}
 	    }
 	}
