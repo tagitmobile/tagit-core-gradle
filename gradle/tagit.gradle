@@ -36,7 +36,8 @@ if (project.tasks.findByName('sonarqube')) {
 			println "[sonarqube] Project Key: " + "${project.tasks['sonarqube'].properties['sonar.projectKey'].get()}"
 		}
 	}
-	//project.tasks["sonar"].dependsOn "printSonarProperties"  
+  if (project.hasProperty('sonar'))
+	  project.tasks["sonar"].dependsOn "printSonarProperties"  
 }
 
 repositories {
