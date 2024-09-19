@@ -9,9 +9,8 @@ if (project.tasks.findByName('sonarqube')) {
   sonarqube {
     properties {
 
-			def productPackages = ["com.mobeix", "com.tagit.commons", "com.tagit.digital", "com.tagit.mdb.feature",
-							"com.tagit.mcb.services", "com.tagit.mcb.web", "com.tagit.mcb.admin", "com.tagit.mcb.component",
-							"com.tagit.mrb.services", "com.tagit.mrb.web", "com.tagit.mrb.admin", "com.tagit.mrb.component" ]
+			def productPackages = ["com.mobeix", "com.tagit.commons", "com.tagit.digital", "com.tagit.mdb", 
+                             "com.tagit.mcb", "com.tagit.mrb", "com.tagit.mfb" ]
 
 			if ( productPackages.any { pckg -> group.startsWith(pckg) } ) {
 				println "[sonarqube] Using Product SonarQube server for '${group}' package."
