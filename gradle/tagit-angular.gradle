@@ -1,3 +1,5 @@
+println "[tagit-angular] Applying TagitCore v7.5 WAR and Node JS plug-ins and configurations for Angular builds"
+
 apply plugin: 'war'
 apply plugin: 'com.github.node-gradle.node'
 
@@ -26,25 +28,25 @@ node {
     // If false, it will try to use globally installed node.    
     download = true
 
-    println "[node] Node Version: ${version}, NPM version: ${npmVersion}"
+    println "[tagit-angular] Node Version: ${version}, NPM version: ${npmVersion}"
 	// Set the work directory for unpacking node
-	println "[node] NodeJS work directory: ${project.buildDir}/nodejs"
-    workDir = file("${project.buildDir}/nodejs")
+	println "[tagit-angular] NodeJS work directory: ${project.buildDir}/nodejs"
+    workDir = file("web-build/nodejs")
     // Set the work directory for NPM
-	println "[node] NPM work directory: ${project.buildDir}/npm"
-    npmWorkDir = file("${project.buildDir}/npm")   
+	println "[tagit-angular] NPM work directory: ${project.buildDir}/npm"
+    npmWorkDir = file("web-build/npm")   
     // Set the work directory for Yarn
-	println "[node] Yarn  work directory: ${project.buildDir}/yarn"
-    yarnWorkDir = file("${project.buildDir}/yarn")
+	println "[tagit-angular] Yarn  work directory: ${project.buildDir}/yarn"
+    yarnWorkDir = file("web-build/yarn")
 	// Set the work directory where node_modules should be located
-	println "[node] Node Modules location: ${project.projectDir}"
+	println "[tagit-angular] Node Modules location: ${project.projectDir}"
     nodeModulesDir = file("${project.projectDir}")     
 }
 
 task copyMibLibrary(type: Copy) {
 	description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
 	// TODO: Replace with Nexus NPM Dependencies
-    from "lib/**"
+	from "lib/"
 	into "node_modules/"  		
 	outputs.upToDateWhen { false }
 }
@@ -60,25 +62,24 @@ npm_run_build {
     inputs.file 'package.json'
     inputs.file 'package-lock.json'
 
-    outputs.dir 'build'
+    outputs.dir 'web-build'
 //    args = ['--base-href /web/', '--prod']
-	
-	outputs.upToDateWhen { false }	
+    outputs.upToDateWhen { false }
 }
 npm_run_build.dependsOn copyMibLibrary
 
 // pack output of the build into JAR file
 task packageNpmApp(type: Zip) {
-	description 'Pack NPM build output into a single JAR file'
+    description 'Pack NPM build output into a single JAR file'
     dependsOn npm_run_build
-    baseName "${project.name}-web"
-    extension 'jar'
-    destinationDir file("${project.buildDir}/libs")
-    from('build/dist') {
-        // optional path under which output will be visible in Java classpath, e.g. static resources path
-        into 'static/web'
+    archiveBaseName = "${project.name}-web"
+    archiveExtension = "jar"
+    destinationDirectory = file("${project.buildDir}/libs")
+    from('web-build/dist') {
+	    // optional path under which output will be visible in Java classpath, e.g. static resources path
+	    into 'static/web'
     }
-	println "[node] Packaged app: ${project.name}-web"
+	println "[tagit-angular] Packaged app: ${project.name}-web"
 	outputs.upToDateWhen { false }
 }
 assemble.dependsOn packageNpmApp
