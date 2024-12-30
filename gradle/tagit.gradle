@@ -134,6 +134,7 @@ if (project.tasks.findByName('javadoc')) {
     classpath = configurations.compileClasspath // ensure your dependencies are using compileClasspath
     destinationDir = file('javadoc/')
     exclude "**/*.md"
+    exclude "**/.gitkeep"
   // exclude "**/domain/**"
   title = "${projectName} v" + version
   options.overview = "src/main/javadoc/overview.html"
