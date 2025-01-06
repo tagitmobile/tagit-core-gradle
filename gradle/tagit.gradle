@@ -5,8 +5,8 @@ apply plugin: "project-report"
 
 //apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
 
-if (project.tasks.findByName('sonarqube')) {
-  sonarqube {
+if (project.tasks.findByName('sonar')) {
+  sonar {
     properties {
 
 			def productPackages = ["com.mobeix", "com.tagit.commons", "com.tagit.digital", "com.tagit.mdb", 
