@@ -3,13 +3,37 @@ apply plugin: "project-report"
 
 //apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
 
-sonarqube {
-	properties {
-		property "sonar.host.url", "https://sonarqube.tagitmobile.com"
-		//CI-CD Tools Credentials 
-        property "sonar.login", "gradle"
-        property "sonar.password", "Tagit123"
+if (project.tasks.findByName('sonarqube')) {
+  sonarqube {
+    properties {
+
+			def productPackages = ["com.mobeix", "com.tagit.commons", "com.tagit.digital", "com.tagit.mdb", 
+                             "com.tagit.dcb", "com.tagit.mcb", "com.tagit.mrb", "com.tagit.mfb" ]
+
+			if ( productPackages.any { pckg -> group.startsWith(pckg) } ) {
+				println "[sonarqube] Using Product SonarQube server for '${group}' package."
+				property "sonar.host.url", "https://sonarqube-cloud.tagitmobile.com"
+        // Default CI-CD tools credentials 
+        property "sonar.login", "squ_f4caa57be81d3fc0e599c550e093ba4b657b0df7"
+			} else {
+				println "[sonarqube] Using Services SonarQube server for '${group}' package."
+				property "sonar.host.url", "https://sonarqube-services.tagitmobile.com"
+        property "sonar.login", "01a86c235e09af8e5cee2260718e590295c6a933"        
+			}
+
+      // [rj.added 2024.06.18] follow the https://edocs1.tagitmobile.com/confluence/pages/viewpage.action?spaceKey=PPDG&title=Code+Quality+Guidelines
+    	property("sonar.projectKey", "${group}:${rootProject.name}${project.path}:${removeSnapshot(project.version)}")
+			property("sonar.projectName", "${project.name}-${removeSnapshot(project.version)}")
+    }
+  }
+
+	task printSonarProperties {
+		doLast {
+			println "[sonarqube] Project Name: " + "${project.tasks['sonarqube'].properties['sonar.projectName'].get()}"
+			println "[sonarqube] Project Key: " + "${project.tasks['sonarqube'].properties['sonar.projectKey'].get()}"
+		}
 	}
+	project.tasks["sonarqube"].dependsOn "printSonarProperties"  
 }
 
 repositories {
