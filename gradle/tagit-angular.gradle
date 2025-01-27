@@ -18,9 +18,9 @@ configurations.default.extendsFrom(configurations.npmResources)
 // node for angular [rj.added 2020.01.07]
 node {
 	// Version of node to use.
-    version = '16.17.1'
+    version = '20.18.2'
     // Version of npm to use.
-    npmVersion = '8.15.0'
+    npmVersion = '10.8.2'
     // Version of Yarn to use.
     // yarnVersion = '1.10.1'    
     
