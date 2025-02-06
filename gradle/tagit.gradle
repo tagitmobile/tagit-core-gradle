@@ -330,4 +330,10 @@ dependencies {
   
 }
 
+// [rj.added 2025.02.06] in Gradle 8.x, the project report plug-in defaults to system.out causing huge unexpected logging output
+htmlDependencyReport {
+    projects = project.allprojects
+    outputFile = file("deploy/${project.name}-${version}-dependencies.txt")
+}
+
 defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
