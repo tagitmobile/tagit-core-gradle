@@ -45,8 +45,8 @@ repositories {
 		maven {
 			url 'https://partner-nexus-cloud.tagitmobile.com/repository/maven-public/'
 			credentials {
-			username project.nexusUser
-			password project.nexusPassword
+        username findProperty("nexusUser") ?: ""
+        password findProperty("nexusPassword") ?: ""
 			}		
 		} 
 	}
@@ -80,8 +80,8 @@ repositories {
 		maven {
 				url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
 			credentials {
-			username project.nexusUser
-			password project.nexusPassword
+        username findProperty("nexusUser") ?: ""
+        password findProperty("nexusPassword") ?: ""
 			}		
 		}
 	}
@@ -309,6 +309,18 @@ eclipse {
 		}
 	}
   }
+}
+
+// [rj.added 2025.02.21] added to display the repositories used
+task displayRepositories {
+    doLast {
+        repositories.each { repo ->
+            println "Repository URL: ${repo.url}"
+            if (repo.credentials) {
+                println "Username: ${repo.credentials.username}"
+            }
+        }
+    }
 }
 
 // [rj.added 2020.06.01] common dependencies for TagitCore Mobeix Service libraries
