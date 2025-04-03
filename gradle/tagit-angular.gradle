@@ -65,27 +65,54 @@ task copyMibLibrary(type: Copy) {
 }
 copyMibLibrary.dependsOn npmInstall
 
-npm_run_build {
-    // make sure the build task is executed only when appropriate files change
+task npmBuild(type: Exec) {
+    group = 'Node'
+    description = 'Build the Angular application'
+    dependsOn npmInstall
+    
+    workingDir = file("${project.projectDir}/src/main/webapp")
+    
+    // Input/output declarations for incremental build support
     inputs.files fileTree('src/main/webapp/public')
     inputs.files fileTree('src/main/webapp/src')
     inputs.files fileTree('src/main/webapp/config')
-
-    // 'node_modules' appeared not reliable for dependency change detection (the task was rerun without changes)
-    // though 'package.json' and 'package-lock.json' should be enough anyway
     inputs.file 'package.json'
     inputs.file 'package-lock.json'
-
     outputs.dir 'web-build'
-//    args = ['--base-href /web/', '--prod']
+    
+    doFirst {
+        println "[tagit-angular] Building Angular application in ${workingDir}"
+    }
+    
+    environment = [
+        'NODE_OPTIONS': '--max-old-space-size=4096',
+        'CI': 'false'
+    ]
+    
+    if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+        commandLine 'cmd', '/c', 'npm', 'run', 'build'
+    } else {
+        commandLine 'npm', 'run', 'build'
+    }
+    
+    standardOutput = new ByteArrayOutputStream()
+    errorOutput = new ByteArrayOutputStream()
+    
+    doLast {
+        println "[tagit-angular] Build output:\n${standardOutput.toString()}"
+        if (errorOutput.toString()) {
+            println "[tagit-angular] Build errors:\n${errorOutput.toString()}"
+        }
+        println "[tagit-angular] Completed Angular build"
+    }
+    
     outputs.upToDateWhen { false }
 }
-npm_run_build.dependsOn copyMibLibrary
 
 // pack output of the build into JAR file
 task packageNpmApp(type: Zip) {
     description 'Pack NPM build output into a single JAR file'
-    dependsOn npm_run_build
+    dependsOn npmBuild
     archiveBaseName = "${project.name}-web"
     archiveExtension = "jar"
     destinationDirectory = file("${project.buildDir}/libs")
