@@ -15,64 +15,37 @@ configurations {
 configurations.default.extendsFrom(configurations.npmResources)
 
 // Custom npm install task using direct command execution
-task npmInstall(type: Exec) {
+def npmCommand = System.getProperty('os.name').toLowerCase().contains('windows') ? ['cmd', '/c', 'npm'] : ['npm']
+
+task npmInstall {
     group = 'Node'
     description = 'Install Node.js dependencies with force flag'
     
-    // Ensure we're in the directory with package.json
-    workingDir = file("${project.projectDir}/src/main/webapp")
-    
-    doFirst {
-        // Verify package.json exists
-        def packageJson = new File(workingDir, 'package.json')
-        if (!packageJson.exists()) {
-            throw new GradleException("[tagit-angular] package.json not found in ${workingDir}")
-        }
-        println "[tagit-angular] Running npm install with force flag in ${workingDir}"
-    }
-    
-    // Set environment variables for npm
-    environment = [
-        'NODE_OPTIONS': '--max-old-space-size=4096',
-        'CI': 'false'
-    ]
-    
-    if (System.getProperty('os.name').toLowerCase().contains('windows')) {
-        commandLine 'cmd', '/c', 'npm', 'install', '--force', '--legacy-peer-deps'
-    } else {
-        commandLine 'npm', 'install', '--force', '--legacy-peer-deps'
-    }
-    
-    // Capture and log the output
-    standardOutput = new ByteArrayOutputStream()
-    errorOutput = new ByteArrayOutputStream()
-    
     doLast {
-        println "[tagit-angular] npm install output:\n${standardOutput.toString()}"
-        if (errorOutput.toString()) {
-            println "[tagit-angular] npm install errors:\n${errorOutput.toString()}"
+        def result = project.exec {
+            workingDir = file("${project.projectDir}/src/main/webapp")
+            environment = ['NODE_OPTIONS': '--max-old-space-size=4096', 'CI': 'false']
+            commandLine = npmCommand + ['install', '--force', '--legacy-peer-deps']
+            standardOutput = new ByteArrayOutputStream()
+            errorOutput = new ByteArrayOutputStream()
         }
-        println "[tagit-angular] Completed npm install"
+        println "[tagit-angular] npm install completed with exit value: ${result.exitValue}"
     }
 }
 
 task copyMibLibrary(type: Copy) {
-    description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
-    // TODO: Replace with Nexus NPM Dependencies
+    description = 'Copy Mobeix Angular Customer Admin Library into Node Modules'
     from "lib/"
-    into "node_modules/"      
+    into "node_modules/"
     outputs.upToDateWhen { false }
 }
 copyMibLibrary.dependsOn npmInstall
 
-task npmBuild(type: Exec) {
+task npmRunBuild {
     group = 'Node'
     description = 'Build the Angular application'
     dependsOn npmInstall
     
-    workingDir = file("${project.projectDir}/src/main/webapp")
-    
-    // Input/output declarations for incremental build support
     inputs.files fileTree('src/main/webapp/public')
     inputs.files fileTree('src/main/webapp/src')
     inputs.files fileTree('src/main/webapp/config')
@@ -80,30 +53,15 @@ task npmBuild(type: Exec) {
     inputs.file 'package-lock.json'
     outputs.dir 'web-build'
     
-    doFirst {
-        println "[tagit-angular] Building Angular application in ${workingDir}"
-    }
-    
-    environment = [
-        'NODE_OPTIONS': '--max-old-space-size=4096',
-        'CI': 'false'
-    ]
-    
-    if (System.getProperty('os.name').toLowerCase().contains('windows')) {
-        commandLine 'cmd', '/c', 'npm', 'run', 'build'
-    } else {
-        commandLine 'npm', 'run', 'build'
-    }
-    
-    standardOutput = new ByteArrayOutputStream()
-    errorOutput = new ByteArrayOutputStream()
-    
     doLast {
-        println "[tagit-angular] Build output:\n${standardOutput.toString()}"
-        if (errorOutput.toString()) {
-            println "[tagit-angular] Build errors:\n${errorOutput.toString()}"
+        def result = project.exec {
+            workingDir = file("${project.projectDir}/src/main/webapp")
+            environment = ['NODE_OPTIONS': '--max-old-space-size=4096', 'CI': 'false']
+            commandLine = npmCommand + ['run', 'build']
+            standardOutput = new ByteArrayOutputStream()
+            errorOutput = new ByteArrayOutputStream()
         }
-        println "[tagit-angular] Completed Angular build"
+        println "[tagit-angular] npm build completed with exit value: ${result.exitValue}"
     }
     
     outputs.upToDateWhen { false }
@@ -112,7 +70,7 @@ task npmBuild(type: Exec) {
 // pack output of the build into JAR file
 task packageNpmApp(type: Zip) {
     description 'Pack NPM build output into a single JAR file'
-    dependsOn npmBuild
+    dependsOn npmRunBuild
     archiveBaseName = "${project.name}-web"
     archiveExtension = "jar"
     destinationDirectory = file("${project.buildDir}/libs")
