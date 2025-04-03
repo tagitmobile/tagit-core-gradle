@@ -42,8 +42,8 @@ node {
 	println "[tagit-angular] Node Modules location: ${project.projectDir}"
     nodeModulesDir = file("${project.projectDir}")
     
-    // Force npm install
-    npmInstallCommand = ['install', '--force']     
+    // Force npm install with legacy peer deps to handle compatibility issues
+    npmInstallCommand = ['install', '--force', '--legacy-peer-deps']     
 }
 
 task copyMibLibrary(type: Copy) {
