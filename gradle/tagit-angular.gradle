@@ -42,18 +42,21 @@ node {
 	println "[tagit-angular] Node Modules location: ${project.projectDir}"
     nodeModulesDir = file("${project.projectDir}")
     
-    // Configure npm install command
-    npmInstallCommand = 'install --force --legacy-peer-deps'     
+}
+
+task npmInstallWithForce(type: NpmTask) {
+    description = 'Install Node.js dependencies with force and legacy peer deps'
+    args = ['install', '--force', '--legacy-peer-deps']
 }
 
 task copyMibLibrary(type: Copy) {
-	description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
-	// TODO: Replace with Nexus NPM Dependencies
-	from "lib/"
-	into "node_modules/"  		
-	outputs.upToDateWhen { false }
+    description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
+    // TODO: Replace with Nexus NPM Dependencies
+    from "lib/"
+    into "node_modules/"      
+    outputs.upToDateWhen { false }
 }
-copyMibLibrary.dependsOn npmInstall
+copyMibLibrary.dependsOn npmInstallWithForce
 
 npm_run_build {
     // make sure the build task is executed only when appropriate files change
