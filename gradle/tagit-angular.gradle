@@ -45,11 +45,16 @@ node {
 }
 
 npmInstall {
+    doFirst {
+        println "[tagit-angular] Executing npm install with args: ${args}"
+    }
     args = ['install']
     args.add('--force')
     args.add('--legacy-peer-deps')
     outputs.upToDateWhen { false }
-}
+    doLast {
+        println "[tagit-angular] Completed npm install task"
+    }
 
 task copyMibLibrary(type: Copy) {
     description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
