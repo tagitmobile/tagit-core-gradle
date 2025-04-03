@@ -42,17 +42,18 @@ node {
 	println "[tagit-angular] Node Modules location: ${project.projectDir}"
     nodeModulesDir = file("${project.projectDir}")
     
-    // Configure npm install task
+    // Configure npm install tasks
     npmInstall {
+        args = ['install', '--force', '--legacy-peer-deps']
         doFirst {
-            println "[tagit-angular] Executing npm install with args: ${args}"
+            println "[tagit-angular] Running npmInstall with args: ${args}"
         }
-        args = ['install']
-        args.add('--force')
-        args.add('--legacy-peer-deps')
-        outputs.upToDateWhen { false }
-        doLast {
-            println "[tagit-angular] Completed npm install task"
+    }
+
+    npm_install {
+        args = ['install', '--force', '--legacy-peer-deps']
+        doFirst {
+            println "[tagit-angular] Running npm_install with args: ${args}"
         }
     }
 
