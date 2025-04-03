@@ -1,7 +1,6 @@
 println "[tagit-angular] Applying TagitCore v7.5 WAR and Node JS plug-ins and configurations for Angular builds"
 
 apply plugin: 'war'
-apply plugin: 'com.github.node-gradle.node'
 
 def getDate() {
     return new Date().format('yyyyMMddHHmmss')
@@ -9,49 +8,34 @@ def getDate() {
 
 // declare a dedicated scope for publishing the packaged JAR
 configurations {
-	npmResources
-//	providedRuntime
-//	compile.exclude module: 'spring-boot-starter-json' // to replace with gson // [rj.added 2018.12.04] removing causes problems with io.springfox and spring-boot-starter-actuator: Error creating bean with name 'objectMapperConfigurer'
+    npmResources
+//    providedRuntime
+//    compile.exclude module: 'spring-boot-starter-json' // to replace with gson // [rj.added 2018.12.04] removing causes problems with io.springfox and spring-boot-starter-actuator: Error creating bean with name 'objectMapperConfigurer'
 }
 configurations.default.extendsFrom(configurations.npmResources)
 
-// node for angular [rj.added 2020.01.07]
-project.extensions.configure('node') {
-    // Version of node to use
-    version = '20.15.1'
-    // Version of npm to use
-    npmVersion = '10.7.0'
-    // Version of Yarn to use
-    // yarnVersion = '1.10.1'
-    // If true, it will download node using above parameters.
-    // If false, it will try to use globally installed node.    
-    download = true
-
-    println "[tagit-angular] Node Version: ${version}, NPM version: ${npmVersion}"
-    // Set the work directory for unpacking node
-    println "[tagit-angular] NodeJS work directory: ${project.buildDir}/nodejs"
-    workDir = file("web-build/nodejs")
-    // Set the work directory for NPM
-    println "[tagit-angular] NPM work directory: ${project.buildDir}/npm"
-    npmWorkDir = file("web-build/npm")   
-    // Set the work directory for Yarn
-    println "[tagit-angular] Yarn  work directory: ${project.buildDir}/yarn"
-    yarnWorkDir = file("web-build/yarn")
-    // Set the work directory where node_modules should be located
-    println "[tagit-angular] Node Modules location: ${project.projectDir}"
-    nodeModulesDir = file("${project.projectDir}")
-    
-}
-
-// Override the default npmInstall task with our custom Exec task
+// Custom npm install task using direct command execution
 task npmInstall(type: Exec) {
     group = 'Node'
     description = 'Install Node.js dependencies with force flag'
-    workingDir = file("${project.projectDir}")
+    
+    // Ensure we're in the directory with package.json
+    workingDir = file("${project.projectDir}/src/main/webapp")
     
     doFirst {
+        // Verify package.json exists
+        def packageJson = new File(workingDir, 'package.json')
+        if (!packageJson.exists()) {
+            throw new GradleException("[tagit-angular] package.json not found in ${workingDir}")
+        }
         println "[tagit-angular] Running npm install with force flag in ${workingDir}"
     }
+    
+    // Set environment variables for npm
+    environment = [
+        'NODE_OPTIONS': '--max-old-space-size=4096',
+        'CI': 'false'
+    ]
     
     if (System.getProperty('os.name').toLowerCase().contains('windows')) {
         commandLine 'cmd', '/c', 'npm', 'install', '--force', '--legacy-peer-deps'
@@ -59,7 +43,15 @@ task npmInstall(type: Exec) {
         commandLine 'npm', 'install', '--force', '--legacy-peer-deps'
     }
     
+    // Capture and log the output
+    standardOutput = new ByteArrayOutputStream()
+    errorOutput = new ByteArrayOutputStream()
+    
     doLast {
+        println "[tagit-angular] npm install output:\n${standardOutput.toString()}"
+        if (errorOutput.toString()) {
+            println "[tagit-angular] npm install errors:\n${errorOutput.toString()}"
+        }
         println "[tagit-angular] Completed npm install"
     }
 }
