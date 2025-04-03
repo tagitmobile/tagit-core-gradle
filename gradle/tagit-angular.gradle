@@ -44,9 +44,11 @@ node {
     
 }
 
-task npmInstallWithForce(type: NpmTask) {
-    description = 'Install Node.js dependencies with force and legacy peer deps'
-    args = ['install', '--force', '--legacy-peer-deps']
+npmInstall {
+    args = ['install']
+    args.add('--force')
+    args.add('--legacy-peer-deps')
+    outputs.upToDateWhen { false }
 }
 
 task copyMibLibrary(type: Copy) {
@@ -56,7 +58,7 @@ task copyMibLibrary(type: Copy) {
     into "node_modules/"      
     outputs.upToDateWhen { false }
 }
-copyMibLibrary.dependsOn npmInstallWithForce
+copyMibLibrary.dependsOn npmInstall
 
 npm_run_build {
     // make sure the build task is executed only when appropriate files change
