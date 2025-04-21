@@ -45,6 +45,7 @@ node {
 
 task copyMibLibrary(type: Copy) {
 	description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
+    duplicatesStrategy = DuplicatesStrategy.WARN
 	// TODO: Replace with Nexus NPM Dependencies
 	from "lib/"
 	into "node_modules/"  		

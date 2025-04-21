@@ -181,6 +181,7 @@ task cleanDeploy(type:Delete) {
 cleanDeploy.dependsOn clean
 
 task copyJar(type: Copy) {
+    duplicatesStrategy = DuplicatesStrategy.WARN
     if (project.tasks.findByName('javadoc')) {
       from jar, sourcesJar, javadocJar
     } else {
@@ -231,6 +232,7 @@ def removeSnapshot(String version) {
 build.dependsOn copyJar
 
 task copyDependencies(type: Copy) {
+  duplicatesStrategy = DuplicatesStrategy.WARN
   from configurations.runtimeClasspath // [rj.updated 2020.06.01] gradle 6.4.1 support instead of configurations.default
   into 'build/dependencies'
 }

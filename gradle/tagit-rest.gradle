@@ -86,6 +86,7 @@ if (project.tasks.findByName('publish')) {
 
 task copyWar(type: Copy) {
     dependsOn bootWar
+    duplicatesStrategy = DuplicatesStrategy.WARN
     from war, bootJar, bootWar
     into "deploy"
 }
