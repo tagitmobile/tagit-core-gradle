@@ -58,6 +58,17 @@ repositories {
 				}		
 		}
 	}
+	// [rj.added 2025.05.03] secure nexus repository for partner training use
+	else if (null != System.properties['training']) {
+		println "Using partner training public repository maven-public" 
+		maven {
+				url 'https://training-nexus.tagitmobile.com/repository/maven-public/'
+				credentials {
+					username project.nexusUser
+					password project.nexusPassword
+				}		
+		}
+	}
 	// [rj.added 2020.06.04] local nexus repository for offline work
 	else if (null != System.properties['local']) {
 		println "Using local public repository local-maven-public (maven-public + tagit-maven-public)" 

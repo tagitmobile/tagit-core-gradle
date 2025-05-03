@@ -79,10 +79,21 @@ repositories {
 		println "Using partner public repository maven-public" 
 		maven {
 				url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
-			credentials {
-        username findProperty("nexusUser") ?: ""
-        password findProperty("nexusPassword") ?: ""
-			}		
+				credentials {
+          username findProperty("nexusUser") ?: ""
+          password findProperty("nexusPassword") ?: ""
+				}			
+		}
+	}
+	// [rj.added 2025.05.03] secure nexus repository for partner training use
+	else if (null != System.properties['training']) {
+		println "Using partner training public repository maven-public" 
+		maven {
+				url 'https://training-nexus.tagitmobile.com/repository/maven-public/'
+				credentials {
+          username findProperty("nexusUser") ?: ""
+          password findProperty("nexusPassword") ?: ""
+				}		
 		}
 	}
 	// [rj.added 2020.06.04] local nexus repository for offline work
