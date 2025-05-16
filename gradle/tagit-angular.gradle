@@ -69,15 +69,24 @@ npm_run_build {
 task cleanNpmCache(type: Exec) {
     description = 'Force clear the npm cache before installation'
     group = 'npm'
-
+    workingDir = file("${project.projectDir}")
+    
+    doFirst {
+        println "[tagit-angular] Cleaning npm cache..."
+    }
+    
     commandLine 'npm', 'cache', 'clean', '--force'
-    // Optional: show output in console
     standardOutput = System.out
     errorOutput = System.err
+    
+    doLast {
+        println "[tagit-angular] npm cache cleaned successfully"
+    }
 }
 
 npm_run_build.dependsOn copyMibLibrary
-npm_run_build.dependsOn cleanNpmCache
+npmInstall.dependsOn cleanNpmCache
+copyMibLibrary.dependsOn npmInstall
 
 // pack output of the build into JAR file
 task packageNpmApp(type: Zip) {
