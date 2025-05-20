@@ -66,7 +66,7 @@ npm_run_build {
 //    args = ['--base-href /web/', '--prod']
     outputs.upToDateWhen { false }
 }
-task cleanNpmCache(type: Exec) {
+task cleanNpmCache(type: NodeTask) {
     description = 'Force clear the npm cache before installation'
     group = 'npm'
     workingDir = file("${project.projectDir}")
@@ -75,13 +75,15 @@ task cleanNpmCache(type: Exec) {
         println "[tagit-angular] Cleaning npm cache..."
     }
     
-    commandLine 'npm', 'cache', 'clean', '--force'
-    standardOutput = System.out
-    errorOutput = System.err
+    script = file('node_modules/npm/bin/npm-cli.js')
+    args = ['cache', 'clean', '--force']
     
     doLast {
         println "[tagit-angular] npm cache cleaned successfully"
     }
+    
+    // Ensure this task runs after nodeSetup
+    dependsOn nodeSetup
 }
 
 npm_run_build.dependsOn copyMibLibrary
