@@ -1,3 +1,5 @@
+println "[tagit-rest] Applying TagitCore v6.16 Boot WAR plug-ins, configurations and dependencies for Spring Boot applications"
+
 apply plugin: "war"
 apply plugin: 'org.springframework.boot'
 //apply plugin: 'io.spring.dependency-management' // [rj.commented 2021.10.07] Use Gradle's BOM support instead from tagit-core-rest
@@ -5,10 +7,10 @@ apply plugin: 'org.springframework.boot'
 ext {
 	// default a tomcat version
 	if (!project.hasProperty("tomcatVersion")) {
-	    tomcatVersion = "9.0.83"
+	    tomcatVersion = "9.0.105"
 	}
+	println "[tagit-rest] Overriding Tomcat Version to ${tomcatVersion}"
 }
-
 
 configurations.all {
 	exclude module: 'spring-boot-starter-logging' // to replace with log4j2 and fix the exception Exception in thread "main" java.lang.StackOverflowError at org.apache.logging.log4j.util.StackLocator.getCallerClass(StackLocator.java:112)
@@ -25,7 +27,7 @@ def getDate() {
 // By default, when the bootJar or bootWar tasks are configured, the jar or war tasks are disabled. A project can be configured to build both an executable archive and a normal archive at the same time by enabling the jar or war task:
 jar {
 	enabled = true
-	archiveClassifier = null
+	archiveClassifier = ''
 }
 war {
 	enabled = false
@@ -72,17 +74,19 @@ if (project.tasks.findByName('publish')) {
 			// }
 			mavenJava(MavenPublication) {
 //				from components.web // Maven publication 'mavenJava' cannot include multiple components
-				artifact tasks.named("bootWar")
-        	}
+				if (project.hasProperty('bootWar'))
+					artifact tasks.named("bootWar")
+				if (project.hasProperty('bootJar'))
+					artifact tasks.named("bootJar")
+			}
 	    }
 	}
-	println "Boot WAR artifacts will also be published."
-} else {
-	println "No Boot WAR artifacts will be published."
+	println "[tagit-rest] Detected publish task. Registering Boot WAR artifacts to be published."
 }
 
 task copyWar(type: Copy) {
     dependsOn bootWar
+    duplicatesStrategy = DuplicatesStrategy.WARN
     from war, bootJar, bootWar
     into "deploy"
 }
@@ -118,5 +122,4 @@ dependencies {
 	providedRuntime("com.tagit.commons:tagit-core-db")
 	
 }
-
 defaultTasks 'clean', 'eclipse', 'build', 'bootJar', 'copyWar', 'htmlDependencyReport', 'copyDependencies'

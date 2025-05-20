@@ -1,3 +1,5 @@
+println "[tagit] Applying common TagitCore v6.16 plug-ins, configurations and dependencies for Java applications or libraries"
+
 apply plugin: "eclipse"
 apply plugin: "project-report"
 
@@ -164,9 +166,17 @@ def getDate() {
     return new Date().format('yyyyMMddHHmmss')
 }
 
+def removeSnapshot(String version) {
+    if (version.trim().endsWith("-SNAPSHOT")) {
+        return version.trim().substring(0, version.trim().length() - "-SNAPSHOT".length())
+    }
+    return version
+}
+
 build.dependsOn copyJar
 
 task copyDependencies(type: Copy) {
+  duplicatesStrategy = DuplicatesStrategy.WARN
   from configurations.runtimeClasspath // [rj.updated 2020.06.01] gradle 6.4.1 support instead of configurations.default
   into 'build/dependencies'
 }
@@ -182,7 +192,7 @@ eclipse {
     containers 'org.eclipse.jdt.launching.JRE_CONTAINER' 
   }
   	
-  project {
+  project {   
     //if you don't want any node_modules folder to appear in Eclipse, you can filter it out:
     resourceFilter {
       appliesTo = 'FOLDERS'
@@ -247,6 +257,18 @@ eclipse {
   }
 }
 
+// [rj.added 2025.02.21] added to display the repositories used
+task displayRepositories {
+    doLast {
+        repositories.each { repo ->
+            println "Repository URL: ${repo.url}"
+            if (repo.credentials) {
+                println "Username: ${repo.credentials.username}"
+            }
+        }
+    }
+}
+
 // [rj.added 2020.06.01] common dependencies for TagitCore Mobeix Service libraries
 dependencies {
 
@@ -266,4 +288,12 @@ dependencies {
   
 }
 
-defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
+// [rj.added 2025.02.06] in Gradle 8.x, the project report plug-in defaults to system.out causing huge unexpected logging output
+htmlDependencyReport {
+    projects = project.allprojects
+    if (htmlDependencyReport.hasProperty("outputFile")) {
+      outputFile = file("deploy/${project.name}-${version}-dependencies.txt")
+    }
+}
+
+defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'projectReport', 'copyDependencies'
