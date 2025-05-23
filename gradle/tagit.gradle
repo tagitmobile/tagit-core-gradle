@@ -79,10 +79,21 @@ repositories {
 		println "Using partner public repository maven-public" 
 		maven {
 				url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
-			credentials {
-        username findProperty("nexusUser") ?: ""
-        password findProperty("nexusPassword") ?: ""
-			}		
+				credentials {
+          username findProperty("nexusUser") ?: ""
+          password findProperty("nexusPassword") ?: ""
+				}			
+		}
+	}
+	// [rj.added 2025.05.03] secure nexus repository for partner training use
+	else if (null != System.properties['training']) {
+		println "Using partner training public repository maven-public" 
+		maven {
+				url 'https://training-nexus.tagitmobile.com/repository/maven-public/'
+				credentials {
+          username findProperty("nexusUser") ?: ""
+          password findProperty("nexusPassword") ?: ""
+				}		
 		}
 	}
 	// [rj.added 2020.06.04] local nexus repository for offline work
@@ -181,6 +192,7 @@ task cleanDeploy(type:Delete) {
 cleanDeploy.dependsOn clean
 
 task copyJar(type: Copy) {
+    duplicatesStrategy = DuplicatesStrategy.WARN
     if (project.tasks.findByName('javadoc')) {
       from jar, sourcesJar, javadocJar
     } else {
@@ -231,6 +243,7 @@ def removeSnapshot(String version) {
 build.dependsOn copyJar
 
 task copyDependencies(type: Copy) {
+  duplicatesStrategy = DuplicatesStrategy.WARN
   from configurations.runtimeClasspath // [rj.updated 2020.06.01] gradle 6.4.1 support instead of configurations.default
   into 'build/dependencies'
 }
