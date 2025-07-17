@@ -7,16 +7,26 @@ def removeSnapshot(String version) {
     return version
 }
 
+// Ensure JUnit Tests still run without Jacoco or Sonar
+tasks.withType(Test).configureEach {
+    // tell Gradle to use JUnit Platform (JUnit 5)
+    useJUnitPlatform()
+
+    ignoreFailures = true
+
+	// Ensure JUnit Tests does not run by default, but must be included explicitly, i.e. `gradlew test`
+    onlyIf { gradle.startParameter.taskNames.contains('test') }
+}
+
 if (project.tasks.findByName('jacocoTestReport')) {
-    // apply plugin: 'jacoco'
+    println "[jacoco] Jacoco plugin found. Performing Jacoco auto-configuration."
+
     jacoco {
         toolVersion = "0.8.13"
-        // reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+        // reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir') // use defaults
     }
 
     tasks.withType(Test).configureEach {
-        ignoreFailures = true
-        onlyIf { !Boolean.getBoolean("skip.tests") }
         finalizedBy("jacocoTestReport")
     }
 
@@ -27,7 +37,7 @@ if (project.tasks.findByName('jacocoTestReport')) {
         onlyIf { true }
 
         reports {
-            xml.required.set(true)
+            xml.required.set(true) // required by SonarQube Jacoco integration
             csv.required.set(false)
             html.required.set(true)
             html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
@@ -40,20 +50,33 @@ if (project.tasks.findByName('jacocoTestReport')) {
     }
     
     // Root-level task to run all jacocoTestReports in subprojects
-    // task jacocoRootReport {
-    //     dependsOn subprojects.collect { it.tasks.matching { it.name == 'jacocoTestReport' } }
-    // }
-    // Aggregate root report across subprojects
-    if (project == rootProject) {
-        tasks.register("jacocoRootReport", DefaultTask) {
-        group = "verification"
-        description = "Aggregate JaCoCo reports from all subprojects"
-        dependsOn subprojects
-            .collect { it.tasks.findByName("jacocoTestReport") }
-            .findAll { it != null }
-        }
-    }
-
+	if (project == rootProject) {
+	  tasks.register("jacocoRootReport", DefaultTask) {
+	    group       = "verification"
+	    description = "Aggregate JaCoCo from all subprojects"
+	
+	    dependsOn subprojects
+	      .collect { it.tasks.findByName("jacocoTestReport") }
+	      .findAll { it != null }
+	
+	    doFirst {
+	      // this block only runs if jacocoRootReport itself is running
+	      def xmls = subprojects.collect { sub ->
+	        file("${sub.buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+	      }.findAll { it.exists() }
+	
+	      if (xmls) {
+	        println "[jacocoRootReport] Aggregating XMLs: $xmls"
+	        project.sonarqube.properties {
+	          property "sonar.coverage.jacoco.xmlReportPaths", xmls*.absolutePath.join(",")
+	        }
+	      } else {
+	        println "[jacocoRootReport] No Jacoco XMLs to aggregate or no Gradle subprojects " + subprojects + " defined."
+	      }
+	    }
+	  }
+	}    
+    
     jacocoTestCoverageVerification {
         violationRules {
             rule {
@@ -64,20 +87,12 @@ if (project.tasks.findByName('jacocoTestReport')) {
         }
     }
 
-    // apply plugin: 'jacoco-report-aggregation'
-    // reporting {
-    //     reports {
-    //         testCodeCoverageReport(JacocoCoverageReport) { 
-    //             testSuiteName = "test"
-    //         }
-    //     }
-    // }
-    
 } else {
-    println "[jacoco] Jacoco task or plugin is not found. Skipping Sonar configuration."
+    println "[jacoco] Jacoco task or plugin is not found. Skipping Jacoco auto-configuration."
 }
 
 if (project.tasks.findByName('sonar')) {
+    println "[sonar] SonarQube plugin found. Performing SonarQube auto-configuration."
     sonar {
         properties {
             def productPackages = ["com.mobeix", "com.tagit.commons", "com.tagit.digital", "com.tagit.mdb", 
@@ -99,33 +114,17 @@ if (project.tasks.findByName('sonar')) {
             property("sonar.projectName", "${project.name}-${removeSnapshot(project.version)}")
 
             property "sonar.sourceEncoding", "UTF-8"
-            property "sonar.sources", "src/main/java"
-            property "sonar.tests", "src/test/java"
-            property "sonar.java.binaries", "build/classes"
+            // property "sonar.sources", "src/main/java" // use defaults
+            // property "sonar.tests", "src/test/java" // use defaults
+            // property "sonar.java.binaries", "build/classes"  // use defaults
             property "sonar.gradle.skipCompile", "true"
 
-            // [rj.added 2025.07.17] Jacoco Coverage
-            if (project.tasks.findByName('jacocoTestReport')) {
-                 // Dynamically collect JaCoCo XML reports
-                def reportPaths = subprojects.collect { sub ->
-                    def reportFile = file("${sub.buildDir}/reports/jacoco/test/jacocoTestReport.xml")
-                    return reportFile.exists() ? reportFile.absolutePath : null
-                }.findAll { it != null }
-
-                if (!reportPaths.isEmpty()) {
-                    def reportPathString = reportPaths.join(",");
-                    println "[jacoco] JaCoCo XML reports found: " + reportPathString                   
-                    property "sonar.coverage.jacoco.xmlReportPaths", reportPathString
-                } else {
-                    println "[jacoco] No JaCoCo XML reports found; coverage will not be imported."
-                }
-            }
         }
     }
 
     // ensure Sonar runs only after Jacoco
     if (project.tasks.findByName('jacocoTestReport')) {
-        tasks.named("sonarqube") { 
+        tasks.named("sonar") { 
             dependsOn("check") 
         }
     }
@@ -138,6 +137,6 @@ if (project.tasks.findByName('sonar')) {
 	}
 	project.tasks["sonar"].dependsOn "printSonarProperties"  
 } else {
-    println "[sonar] Sonar task or plugin is not found. Skipping Sonar configuration."
+    println "[sonar] Sonar task or plugin is not found. Skipping Sonar auto-configuration."
 }
 
