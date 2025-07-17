@@ -4,7 +4,7 @@ if (project.tasks.findByName('jacocoTestReport')) {
     // apply plugin: 'jacoco'
     jacoco {
         toolVersion = "0.8.13"
-        reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+        // reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
     }
 
     tasks.withType(Test).configureEach {
