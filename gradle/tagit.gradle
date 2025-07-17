@@ -1,42 +1,10 @@
-println "[tagit] Applying common TagitCore v7.5 plug-ins, configurations and dependencies for Java applications or libraries"
+println "[tagit] Applying common TagitCore v7.5.1 plug-ins, configurations and dependencies for Java applications or libraries"
 
 apply plugin: "eclipse"
 apply plugin: "project-report"
 
 //apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
-
-if (project.tasks.findByName('sonar')) {
-  sonar {
-    properties {
-
-			def productPackages = ["com.mobeix", "com.tagit.commons", "com.tagit.digital", "com.tagit.mdb", 
-                             "com.tagit.mcb", "com.tagit.mrb", "com.tagit.mfb" ]
-
-			if ( productPackages.any { pckg -> group.startsWith(pckg) } ) {
-				println "[sonarqube] Using Product SonarQube server for '${group}' package."
-				property "sonar.host.url", "https://sonarqube-cloud.tagitmobile.com"
-        // Default CI-CD tools credentials 
-        property "sonar.login", "squ_f4caa57be81d3fc0e599c550e093ba4b657b0df7"
-			} else {
-				println "[sonarqube] Using Services SonarQube server for '${group}' package."
-				property "sonar.host.url", "https://sonarqube-services.tagitmobile.com"
-        property "sonar.login", "01a86c235e09af8e5cee2260718e590295c6a933"        
-			}
-
-      // [rj.added 2024.06.18] follow the https://edocs1.tagitmobile.com/confluence/pages/viewpage.action?spaceKey=PPDG&title=Code+Quality+Guidelines
-    	property("sonar.projectKey", "${group}:${rootProject.name}${project.path}:${removeSnapshot(project.version)}")
-			property("sonar.projectName", "${project.name}-${removeSnapshot(project.version)}")
-    }
-  }
-
-	task printSonarProperties {
-		doLast {
-			println "[sonarqube] Project Name: " + "${project.tasks['sonarqube'].properties['sonar.projectName'].get()}"
-			println "[sonarqube] Project Key: " + "${project.tasks['sonarqube'].properties['sonar.projectKey'].get()}"
-		}
-	}
-	project.tasks["sonar"].dependsOn "printSonarProperties"  
-}
+apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/tagit-sonar.gradle"
 
 repositories {
   // [rj.added 2024.03.23] added support for cloud instances			
