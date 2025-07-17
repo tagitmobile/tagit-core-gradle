@@ -1,8 +1,6 @@
 println "[tagit-sonar] Applying TagitCore v7.5.1 Sonar plug-ins, configurations and dependencies for Java applications"
 
-
-if (pluginManager.withPlugin('jacoco')) {
-//if (project.tasks.findByName('jacocoTestReport')) {
+if (project.tasks.findByName('jacocoTestReport')) {
     // apply plugin: 'jacoco'
     jacoco {
         toolVersion = "0.8.13"
