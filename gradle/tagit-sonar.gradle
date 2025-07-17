@@ -1,0 +1,134 @@
+println "[tagit-sonar] Applying TagitCore v7.5.1 Sonar plug-ins, configurations and dependencies for Java applications"
+
+
+if (pluginManager.withPlugin('jacoco')) {
+//if (project.tasks.findByName('jacocoTestReport')) {
+    // apply plugin: 'jacoco'
+    jacoco {
+        toolVersion = "0.8.13"
+        reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+    }
+
+    tasks.withType(Test).configureEach {
+        ignoreFailures = true
+        onlyIf { !Boolean.getBoolean("skip.tests") }
+        finalizedBy("jacocoTestReport")
+    }
+
+    tasks.named("jacocoTestReport", JacocoReport) {
+        dependsOn("test")
+        mustRunAfter("test")
+        // Always run, even if no test .exec exists
+        onlyIf { true }
+
+        reports {
+            xml.required.set(true)
+            csv.required.set(false)
+            html.required.set(true)
+            html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+        }
+    }
+
+    // Ensure coverage is part of the "check" lifecycle
+    tasks.named("check") {
+        dependsOn("jacocoTestReport")
+    }
+    
+    // Root-level task to run all jacocoTestReports in subprojects
+    // task jacocoRootReport {
+    //     dependsOn subprojects.collect { it.tasks.matching { it.name == 'jacocoTestReport' } }
+    // }
+    // Aggregate root report across subprojects
+    if (project == rootProject) {
+        tasks.register("jacocoRootReport", DefaultTask) {
+        group = "verification"
+        description = "Aggregate JaCoCo reports from all subprojects"
+        dependsOn subprojects
+            .collect { it.tasks.findByName("jacocoTestReport") }
+            .findAll { it != null }
+        }
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                limit {
+                    minimum = 0.0
+                }
+            }
+        }
+    }
+
+    // apply plugin: 'jacoco-report-aggregation'
+    // reporting {
+    //     reports {
+    //         testCodeCoverageReport(JacocoCoverageReport) { 
+    //             testSuiteName = "test"
+    //         }
+    //     }
+    // }
+    
+}
+
+if (project.tasks.findByName('sonar')) {
+    sonar {
+        properties {
+            def productPackages = ["com.mobeix", "com.tagit.commons", "com.tagit.digital", "com.tagit.mdb", 
+                                "com.tagit.mcb", "com.tagit.mrb", "com.tagit.mfb" ]
+
+            if ( productPackages.any { pckg -> group.startsWith(pckg) } ) {
+                println "[sonarqube] Using Product SonarQube server for '${group}' package."
+                property "sonar.host.url", "https://sonarqube-cloud.tagitmobile.com"
+                // Default CI-CD tools credentials 
+                property "sonar.login", "squ_f4caa57be81d3fc0e599c550e093ba4b657b0df7"
+            } else {
+                println "[sonarqube] Using Services SonarQube server for '${group}' package."
+                property "sonar.host.url", "https://sonarqube-services.tagitmobile.com"
+                property "sonar.login", "01a86c235e09af8e5cee2260718e590295c6a933"        
+            }
+
+            // [rj.added 2024.06.18] follow the https://edocs1.tagitmobile.com/confluence/pages/viewpage.action?spaceKey=PPDG&title=Code+Quality+Guidelines
+            property("sonar.projectKey", "${group}:${rootProject.name}${project.path}:${removeSnapshot(project.version)}")
+            property("sonar.projectName", "${project.name}-${removeSnapshot(project.version)}")
+
+            property "sonar.sourceEncoding", "UTF-8"
+            property "sonar.sources", "src/main/java"
+            property "sonar.tests", "src/test/java"
+            property "sonar.java.binaries", "build/classes"
+            property "sonar.gradle.skipCompile", "true"
+
+            // [rj.added 2025.07.17] Jacoco Coverage
+            if (project.tasks.findByName('jacocoTestReport')) {
+                 // Dynamically collect JaCoCo XML reports
+                def reportPaths = subprojects.collect { sub ->
+                    def reportFile = file("${sub.buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+                    return reportFile.exists() ? reportFile.absolutePath : null
+                }.findAll { it != null }
+
+                if (!reportPaths.isEmpty()) {
+                    def reportPathString = reportPaths.join(",");
+                    println "[jacoco] JaCoCo XML reports found: " + reportPathString                   
+                    property "sonar.coverage.jacoco.xmlReportPaths", reportPathString
+                } else {
+                    println "[jacoco] No JaCoCo XML reports found; coverage will not be imported."
+                }
+            }
+        }
+    }
+
+    // ensure Sonar runs only after Jacoco
+    if (project.tasks.findByName('jacocoTestReport')) {
+        tasks.named("sonarqube") { 
+            dependsOn("check") 
+        }
+    }
+
+    task printSonarProperties {
+		doLast {
+			println "[sonarqube] Project Name: " + "${project.tasks['sonarqube'].properties['sonar.projectName'].get()}"
+			println "[sonarqube] Project Key: " + "${project.tasks['sonarqube'].properties['sonar.projectKey'].get()}"
+		}
+	}
+	project.tasks["sonar"].dependsOn "printSonarProperties"  
+}
+
