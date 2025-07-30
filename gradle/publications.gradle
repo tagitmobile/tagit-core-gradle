@@ -62,6 +62,16 @@ publishing {
 				} 
 	            println "[publications] Publish target will be cloud repository $url as $project.name:$version"
         	} 
+			else if (null != System.properties['labs']) {
+	            def releasesRepoUrl = "https://nexus-cloud-labs.tagitmobile.com/repository/maven-releases/"
+	            def snapshotsRepoUrl = "https://nexus-cloud-labs.tagitmobile.com/repository/maven-snapshots/"
+	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+				credentials {
+					username project.nexusUser
+					password project.nexusPassword
+				} 
+	            println "[publications] Publish target will be cloud-labs repository $url as $project.name:$version"
+        	} 
 			else if (null != System.properties['cloud-qa']) {
 	            def releasesRepoUrl = "https://nexus-cloud.tagitmobile.com/repository/maven-qa/"
 	            def snapshotsRepoUrl = "https://nexus-cloud.tagitmobile.com/repository/maven-snapshots/"
