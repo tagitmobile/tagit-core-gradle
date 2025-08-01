@@ -8,21 +8,44 @@ apply plugin: "project-report"
 if (project.tasks.findByName('sonarqube')) {
   sonarqube {
     properties {
+      def mobeixPackages = ["com.mobeix", "com.tagit.mobeix", "com.tagit.commons"]
+      def mcbPackages = ["com.tagit.mcb", "com.tagit.dcb"]
+      def mrbPackages = ["com.tagit.mrb", "com.tagit.drb"]
+      def mfbPackages = ["com.tagit.mfb"]
+      def mdbPackages = ["com.tagit.digital", "com.tagit.mdb"]
+      def tagitPackages = ["com.tagit"]
 
-			def productPackages = ["com.mobeix", "com.tagit.commons", "com.tagit.digital", "com.tagit.mdb.feature",
-							"com.tagit.mcb.services", "com.tagit.mcb.web", "com.tagit.mcb.admin", "com.tagit.mcb.component",
-							"com.tagit.mrb.services", "com.tagit.mrb.web", "com.tagit.mrb.admin", "com.tagit.mrb.component" ]
-
-			if ( productPackages.any { pckg -> group.startsWith(pckg) } ) {
-				println "[sonarqube] Using Product SonarQube server for '${group}' package."
-				property "sonar.host.url", "https://sonarqube.tagitmobile.com"
-        // Default CI-CD tools credentials 
-        property "sonar.login", "squ_f4caa57be81d3fc0e599c550e093ba4b657b0df7"
-			} else {
-				println "[sonarqube] Using Services SonarQube server for '${group}' package."
-				property "sonar.host.url", "https://sonarqube-services.tagitmobile.com"
-        property "sonar.login", "01a86c235e09af8e5cee2260718e590295c6a933"        
-			}
+      if ( mobeixPackages.any { pckg -> group.startsWith(pckg) } ) {
+          println "[sonarqube] Using Mobeix Product SonarQube server for '${group}' package."
+          property "sonar.host.url", "https://mobeix-sonarqube.tagitmobile.com"
+          property "sonar.login", "squ_c995a5fcf7cfe1f39e449d96678c0fef5e9d517d"
+      } else if ( mcbPackages.any { pckg -> group.startsWith(pckg) } ) {
+          println "[sonarqube] Using MCB Product SonarQube server for '${group}' package."
+          property "sonar.host.url", "https://mcb-sonarqube.tagitmobile.com"
+          property "sonar.login", "squ_b9aefc5710769265d27ded03d8b3bed5194f396f"
+      } else if ( mrbPackages.any { pckg -> group.startsWith(pckg) } ) {
+          println "[sonarqube] Using MRB Product SonarQube server for '${group}' package."
+          property "sonar.host.url", "https://mrb-sonarqube.tagitmobile.com"
+          property "sonar.login", "squ_8a25ab9fa5cb7b7e4f1f203fc4a215e3f3317c6c"
+      } else if ( mfbPackages.any { pckg -> group.startsWith(pckg) } ) {
+          println "[sonarqube] Using MFB Product SonarQube server for '${group}' package."
+          property "sonar.host.url", "https://mfb-sonarqube.tagitmobile.com"
+          property "sonar.login", "squ_7b80e965d10022e20af899f8177ef9ad64a436ee"
+      } else if ( mdbPackages.any { pckg -> group.startsWith(pckg) } ) {
+          println "[sonarqube] Using MDB Product SonarQube server for '${group}' package."
+          property "sonar.host.url", "https://mdb-sonarqube.tagitmobile.com"
+          property "sonar.login", "squ_27d52517acaa070ac90fcd690d02b02a591e1671"
+      } else if ( tagitPackages.any { pckg -> group.startsWith(pckg) } ) {
+          println "[sonarqube] Using Tagit SonarQube server for '${group}' package."
+          property "sonar.host.url", "https://sonarqube.tagitmobile.com"
+          property "sonar.login", "squ_f4caa57be81d3fc0e599c550e093ba4b657b0df7"
+      } else {
+          println "[sonarqube] Using Project Services SonarQube server for '${group}' package."
+//                property "sonar.host.url", "https://sonarqube-services.tagitmobile.com"
+//                property "sonar.login", "01a86c235e09af8e5cee2260718e590295c6a933"        
+          property "sonar.host.url", "https://project-sonarqube.tagitmobile.com"
+          property "sonar.login", "squ_0a43ac2bd18423b1d32a09b4843cedce28acb6f0"        
+      }
 
       // [rj.added 2024.06.18] follow the https://edocs1.tagitmobile.com/confluence/pages/viewpage.action?spaceKey=PPDG&title=Code+Quality+Guidelines
     	property("sonar.projectKey", "${group}:${rootProject.name}${project.path}:${removeSnapshot(project.version)}")
