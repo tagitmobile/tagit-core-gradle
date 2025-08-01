@@ -15,7 +15,7 @@ if (project.tasks.findByName('sonarqube')) {
 
 			if ( productPackages.any { pckg -> group.startsWith(pckg) } ) {
 				println "[sonarqube] Using Product SonarQube server for '${group}' package."
-				property "sonar.host.url", "https://sonarqube-cloud.tagitmobile.com"
+				property "sonar.host.url", "https://sonarqube.tagitmobile.com"
         // Default CI-CD tools credentials 
         property "sonar.login", "squ_f4caa57be81d3fc0e599c550e093ba4b657b0df7"
 			} else {
