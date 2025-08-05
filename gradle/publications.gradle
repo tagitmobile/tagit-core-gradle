@@ -82,6 +82,16 @@ publishing {
 				} 
 	            println "[publications] Publish target will be onprem repository $url as $project.name:$version"
         	} 	
+			else if (null != System.properties['onprem2']) {
+	            def releasesRepoUrl = "https://nexus-onprem2.tagitmobile.com/repository/maven-releases/"
+	            def snapshotsRepoUrl = "https://nexus-onprem2.tagitmobile.com/repository/maven-snapshots/"
+	            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+				credentials {
+					username project.nexusUser
+					password project.nexusPassword
+				} 
+	            println "[publications] Publish target will be onprem repository $url as $project.name:$version"
+        	} 	
 			else if (null != System.properties['poc']) {
 	            def releasesRepoUrl = "https://nexus-poc.tagitmobile.com/repository/maven-releases/"
 	            def snapshotsRepoUrl = "https://nexus-poc.tagitmobile.com/repository/maven-snapshots/"

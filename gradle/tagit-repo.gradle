@@ -24,6 +24,12 @@ repositories {
 				url 'https://nexus-onprem.tagitmobile.com/repository/maven-public/'
 		}
 	}	
+	else if (null != System.properties['onprem2']) {
+		println "Using on-prem public repository maven-public" 
+		maven {
+				url 'https://nexus-onprem2.tagitmobile.com/repository/maven-public/'
+		}
+	}	
 	else if (null != System.properties['poc']) {
 		println "Using POC public repository maven-public" 
 		maven {
