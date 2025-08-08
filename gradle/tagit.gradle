@@ -3,7 +3,7 @@ println "[tagit] Applying common TagitCore v7.5.1 plug-ins, configurations and d
 apply plugin: "eclipse"
 apply plugin: "project-report"
 
-//apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
+// apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
 apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/tagit-sonar.gradle"
 
 repositories {
