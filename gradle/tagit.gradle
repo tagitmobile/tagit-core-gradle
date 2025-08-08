@@ -149,7 +149,7 @@ eclipse {
   }
   	
   project {
-    //if you don't want any node_modules folder to appear in Eclipse, you can filter it out:
+    // if you don't want any node_modules folder to appear in Eclipse, you can filter it out:
     resourceFilter {
       appliesTo = 'FOLDERS'
       type = 'EXCLUDE_ALL'
@@ -227,5 +227,4 @@ dependencies {
   }
   
 }
-
 defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'htmlDependencyReport', 'copyDependencies'
