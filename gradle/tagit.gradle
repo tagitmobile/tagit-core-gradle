@@ -1,9 +1,9 @@
 println "[tagit] Applying common TagitCore v7.5 plug-ins, configurations and dependencies for Java applications or libraries"
-
+ 
 apply plugin: "eclipse"
 apply plugin: "project-report"
 
-//apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
+// apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
 
 if (project.tasks.findByName('sonar')) {
   sonar {
