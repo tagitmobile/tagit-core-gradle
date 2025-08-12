@@ -1,6 +1,8 @@
 println "[tagit-settings] Applying TagitCore v7.5.1 Settings DSL plug-ins"
 
 // [rj.added 2020.04.22] Using the Gradle's new plugins DSL
+// Only Settings scripts can contain a pluginManagement {} and plugins {} block.
+/*
 pluginManagement {
     repositories {
 		// [rj.added 2022.11.23] pull from Tagit Nexus Maven repository
@@ -10,30 +12,34 @@ pluginManagement {
     	gradlePluginPortal()
     }
 }
-
 // [rj.added 2025.08.12] Enable Gradle build cache and use Minio remote cache (Gradle 8.4+ and JDK17+ required)
 plugins {
     id "com.atkinsondev.object-store-cache" version "2.1.0"
 }
+/**/
+if (plugins.hasPlugin("com.atkinsondev.object-store-cache")) {
+    boolean isCI = null != System.getenv("CI")
 
-boolean isCI = null != System.getenv("CI")
-String cacheEndpointUrl = System.getenv("BUILD_CACHE_ENDPOINT_URL") ?: properties['cache_endpoint_url']
-String cacheAccessKey = System.getenv("BUILD_CACHE_ACCESS_KEY") ?: properties['cache_access_key']
-String cacheSecretKey = System.getenv("BUILD_CACHE_SECRET_KEY") ?: properties['cache_secret_key']
+    String cacheEndpointUrl = System.getenv("BUILD_CACHE_ENDPOINT_URL") ?: properties['cache_endpoint_url']
+    String cacheAccessKey = System.getenv("BUILD_CACHE_ACCESS_KEY") ?: properties['cache_access_key']
+    String cacheSecretKey = System.getenv("BUILD_CACHE_SECRET_KEY") ?: properties['cache_secret_key']
 
-println "[tagit-settings] CI is ${isCI} and Cache Endpoint URL is ${cacheEndpointUrl}"
+    println "[cache] CI is ${isCI} and Cache Endpoint URL is ${cacheEndpointUrl}"
 
-buildCache {
-    local {
-        enabled = !isCI // use local for local development
+    buildCache {
+        local {
+            enabled = !isCI // use local for local development
+        }
+        remote(com.atkinsondev.cache.ObjectStoreBuildCache) {
+            endpoint = cacheEndpointUrl
+            accessKey = cacheAccessKey
+            secretKey = cacheSecretKey
+            bucket = 'gradle-build-cache'
+            autoCreateBucket = true
+            expirationInDays = 10
+            push = isCI
+        }
     }
-    remote(com.atkinsondev.cache.ObjectStoreBuildCache) {
-        endpoint = cacheEndpointUrl
-        accessKey = cacheAccessKey
-        secretKey = cacheSecretKey
-        bucket = 'gradle-build-cache'
-        autoCreateBucket = true
-        expirationInDays = 10
-        push = isCI
-    }
+} else {
+    println "[cache] The object-store-cache plugin is not found. Skipping build cache auto-configuration."
 }
