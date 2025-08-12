@@ -11,7 +11,7 @@ apply(plugin: "com.atkinsondev.object-store-cache")
 
 boolean isCI = System.getenv("CI") != null
 
-String cacheEndpointUrl = System.getenv("BUILD_CACHE_ENDPOINT_URL") ?: properties['cache_endpoint_url']
+String cacheEndpointUrl = System.getenv("BUILD_CACHE_ENDPOINT_URL") ?: "http://172.22.0.26:9000"
 String cacheAccessKey = System.getenv("BUILD_CACHE_ACCESS_KEY") ?: properties['cache_access_key']
 String cacheSecretKey = System.getenv("BUILD_CACHE_SECRET_KEY") ?: properties['cache_secret_key']
 
