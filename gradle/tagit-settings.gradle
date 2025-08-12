@@ -9,7 +9,7 @@ buildscript {
 apply(plugin: "com.atkinsondev.object-store-cache")
 //pluginManager.apply("com.atkinsondev.object-store-cache")
 
-boolean isCI = true; // null != System.getenv("CI")
+boolean isCI = System.getenv("CI") != null
 
 String cacheEndpointUrl = System.getenv("BUILD_CACHE_ENDPOINT_URL") ?: properties['cache_endpoint_url']
 String cacheAccessKey = System.getenv("BUILD_CACHE_ACCESS_KEY") ?: properties['cache_access_key']
