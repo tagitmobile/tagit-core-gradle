@@ -1,11 +1,18 @@
 println "[tagit-sonar] Applying TagitCore v7.5 Sonar plug-ins, configurations and dependencies for Java applications"
 
-def removeSnapshot(String version) {
-    if (version.trim().endsWith("-SNAPSHOT")) {
-        return version.trim().substring(0, version.trim().length() - "-SNAPSHOT".length())
-    }
-    return version
+def normalizeVersion(String version) {
+    if (!version) return ""
+
+    // 1) remove everything after the first '-'
+    def core = version.trim().replaceFirst(/-.*/, '')
+
+    // 2) split on dot and filter only numeric parts
+    def numericParts = core.split(/\./).findAll { it.isInteger() }
+
+    // 3) return up to the first 4 numeric parts
+    return numericParts.take(4).join('.')
 }
+
 
 if (project.tasks.findByName('sonar')) {
     println "[sonar] SonarQube plugin found. Performing SonarQube auto-configuration."
@@ -51,8 +58,8 @@ if (project.tasks.findByName('sonar')) {
             }
 
             // [rj.added 2024.06.18] follow the https://edocs1.tagitmobile.com/confluence/pages/viewpage.action?spaceKey=PPDG&title=Code+Quality+Guidelines
-            property("sonar.projectKey", "${group}:${rootProject.name}${project.path}:${removeSnapshot(project.version)}")
-            property("sonar.projectName", "${project.name}-${removeSnapshot(project.version)}")
+            property("sonar.projectKey", "${group}:${rootProject.name}${project.path}:${normalizeVersion(project.version)}")
+            property("sonar.projectName", "${project.name}-${normalizeVersion(project.version)}")
 
             property "sonar.sourceEncoding", "UTF-8"
             // property "sonar.sources", "src/main/java" // use defaults
