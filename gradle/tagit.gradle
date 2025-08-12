@@ -5,6 +5,20 @@ apply plugin: "project-report"
 
 //apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
 
+def normalizeVersion(String version) {
+    if (!version) return ""
+
+    // 1) remove everything after the first '-'
+    def core = version.trim().replaceFirst(/-.*/, '')
+
+    // 2) split on dot and filter only numeric parts
+    def numericParts = core.split(/\./).findAll { it.isInteger() }
+
+    // 3) return up to the first 4 numeric parts
+    return numericParts.take(4).join('.')
+}
+
+
 if (project.tasks.findByName('sonarqube')) {
   sonarqube {
     properties {
@@ -48,8 +62,8 @@ if (project.tasks.findByName('sonarqube')) {
       }
 
       // [rj.added 2024.06.18] follow the https://edocs1.tagitmobile.com/confluence/pages/viewpage.action?spaceKey=PPDG&title=Code+Quality+Guidelines
-    	property("sonar.projectKey", "${group}:${rootProject.name}${project.path}:${removeSnapshot(project.version)}")
-			property("sonar.projectName", "${project.name}-${removeSnapshot(project.version)}")
+    	property("sonar.projectKey", "${group}:${rootProject.name}${project.path}:${normalizeVersion(project.version)}")
+			property("sonar.projectName", "${project.name}-${normalizeVersion(project.version)}")
     }
   }
 
