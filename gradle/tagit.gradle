@@ -1,5 +1,3 @@
-// Updating due to https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/refs/heads/release/v7.5.1/gradle/tagit.gradle returning 404 for some reason
-// Aug 8 5:40 PM SGT
 println "[tagit] Applying common TagitCore v7.5.1 plug-ins, configurations and dependencies for Java applications or libraries"
 
 apply plugin: "eclipse"
@@ -24,6 +22,12 @@ repositories {
 		println "Using cloud public repository maven-public" 
 		maven {
 				url 'https://nexus-cloud.tagitmobile.com/repository/maven-public/'
+		}
+	}
+	else if (null != System.properties['labs']) {
+		println "Using cloud-labs public repository maven-public" 
+		maven {
+				url 'https://nexus-cloud-labs.tagitmobile.com/repository/maven-public/'
 		}
 	}
 	else if (null != System.properties['onprem']) {
@@ -338,4 +342,5 @@ htmlDependencyReport {
       outputFile = file("deploy/${project.name}-${version}-dependencies.txt")
     }
 }
+
 defaultTasks 'clean', 'eclipse', 'build', 'copyJar', 'projectReport', 'copyDependencies'

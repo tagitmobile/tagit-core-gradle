@@ -18,6 +18,12 @@ repositories {
 				url 'https://nexus-cloud.tagitmobile.com/repository/maven-public/'
 		}
 	}
+	else if (null != System.properties['labs']) {
+		println "Using cloud-labs public repository maven-public" 
+		maven {
+				url 'https://nexus-cloud-labs.tagitmobile.com/repository/maven-public/'
+		}
+	}
 	else if (null != System.properties['onprem']) {
 		println "Using on-prem public repository maven-public" 
 		maven {
