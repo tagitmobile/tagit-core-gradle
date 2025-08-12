@@ -17,6 +17,8 @@ plugins {
     id "com.atkinsondev.object-store-cache" version "2.1.0"
 }
 /**/
+apply plugin: 'com.atkinsondev.object-store-cache'
+
 if (plugins.hasPlugin("com.atkinsondev.object-store-cache")) {
     boolean isCI = null != System.getenv("CI")
 
