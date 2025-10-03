@@ -125,4 +125,9 @@ dependencies {
 	providedRuntime("com.tagit.commons:tagit-core-db")
 	
 }
+
+// [rj.added 2025.10.03] Allow to enable Mobeix shared libs approach 
+// Shared Libs from https://edocs1.tagitmobile.com/confluence/display/PMX70B/7.5.4+Shared+Library+Configuration+for+Tomcat+Server
+apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/tagit-shared-lib.gradle"
+
 defaultTasks 'clean', 'eclipse', 'build', 'bootJar', 'copyWar', 'htmlDependencyReport', 'copyDependencies'

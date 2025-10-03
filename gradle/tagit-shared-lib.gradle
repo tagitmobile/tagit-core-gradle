@@ -1,0 +1,213 @@
+// Documentation: https://edocs1.tagitmobile.com/confluence/display/PMX70B/7.5.4+Shared+Library+Configuration+for+Tomcat+Server
+if (null != System.properties['sharedlibs']) {
+    println "[tagit-shared-lib] Applying Mobeix v7.5.1 Shared Lib plug-in, configurations and dependencies for Spring Boot application."
+} else {
+    println "[tagit-shared-lib] Skipping Mobeix v7.5.1 Shared Lib plug-in, configurations and dependencies application for Spring Boot application. Pass `-Dsharedlibs` to enable."
+}
+
+// Define debug function at project level
+project.ext.debug = { String message ->
+    if (project.hasProperty('debugExclusions')) {
+        println "[DEBUG] $message"
+    }
+}
+
+// Add trace function at project level 
+project.ext.trace = { String message ->
+    if (project.hasProperty('traceExclusions')) {
+        println "[TRACE] $message"
+    }
+}
+
+ext {
+    excludeFromWar = [
+        groups: [
+//          'com.tagit.commons'
+        ],
+        modules: [
+            'tagit-core',
+            'tagit-core-rest',
+            'tagit-core-test',
+            'tagit-core-db',
+            'tagit-core-ext',
+            'spring-cloud-starter-bootstrap',
+            'spring-cloud-starter-openfeign',
+            'commons-collections',
+            'commons-beanutils',
+            'commons-lang'
+            ]
+    ]
+    
+    includeInWar = ['tagit-core-bom']
+}
+
+// Add a method to extend the configurations
+ext.extendExclusions = { Map additional ->
+    excludeFromWar.groups.addAll(additional.groups ?: [])
+    excludeFromWar.modules.addAll(additional.modules ?: [])
+    includeInWar.addAll(additional.includeInWar ?: [])
+}
+
+// Helper function to get all transitive dependencies
+def getAllTransitiveDependencies() {
+    def allTransitives = []
+    configurations.runtimeClasspath.resolvedConfiguration.firstLevelModuleDependencies.each { dep ->
+        if (excludeFromWar.groups.contains(dep.module.id.group) ||
+            excludeFromWar.modules.contains(dep.module.id.name)) {
+            collectAllTransitives(dep, allTransitives)
+        }
+    }
+    return allTransitives
+}
+
+// Helper function to collect all transitives recursively
+def collectAllTransitives(dependency, result) {
+    dependency.children.each { child ->
+        def info = [
+            group: child.module.id.group,
+            name: child.module.id.name,
+            version: child.module.id.version
+        ]
+        result << info
+        collectAllTransitives(child, result)
+    }
+}
+
+def shouldExcludeDependency(group, name, allTransitives) {
+    // Check force includes first
+    if (includeInWar.any { include -> name.contains(include) }) {
+        project.debug("Force including: ${group}:${name}")
+        return false
+    }
+    
+    // Check if it's a transitive of any excluded group/module
+    def isTransitive = allTransitives.any { transitive ->
+        transitive.group == group && transitive.name == name
+    }
+    
+    if (isTransitive) {
+        project.debug("Excluding (global transitive): ${group}:${name}")
+        return true
+    }
+    
+    // Check direct exclusions
+    def shouldExclude = excludeFromWar.groups.contains(group) ||
+                       excludeFromWar.modules.contains(name)
+    
+    if (shouldExclude) {
+        project.debug("Excluding (direct): ${group}:${name}")
+    } else {
+        project.debug("Including: ${group}:${name}")
+    }
+    
+    return shouldExclude
+}
+
+def filterClasspath = { classpath ->
+    def allTransitives = getAllTransitiveDependencies()
+    project.trace("\nCollected transitive dependencies to exclude:")
+    allTransitives.each { transitive ->
+        project.trace("  - ${transitive.group}:${transitive.name}")
+    }
+    
+    return classpath.filter { file ->
+        def artifact = configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.find {
+            it.file == file
+        }
+        
+        if (artifact) {
+            def group = artifact.moduleVersion.id.group
+            def name = artifact.name
+            
+            return !shouldExcludeDependency(group, name, allTransitives)
+        }
+        
+        project.debug("Including unknown file: ${file.name}")
+        return true
+    }
+}
+
+if (null != System.properties['sharedlibs'] && project.tasks.findByName('bootWar')) {
+    bootWar {
+        enabled = true
+        
+        doFirst {
+            classpath = filterClasspath(classpath)
+            
+            project.debug("\nBuilding WAR with files:")
+            classpath.files.each { file ->
+                project.trace("  + ${file.name}")
+            }
+        }
+    }
+}
+
+if (null != System.properties['sharedlibs'] && project.tasks.findByName('bootJar')) {
+    bootJar {
+        enabled = true
+        
+        doFirst {
+            classpath = filterClasspath(classpath)
+            
+            project.debug("\nBuilding JAR with files:")
+            classpath.files.each { file ->
+                project.trace("  + ${file.name}")
+            }
+        }
+    }
+}
+
+// Optional: Task to show all exclusions
+tasks.register('showExclusions') {
+    doLast {
+        def allTransitives = getAllTransitiveDependencies()
+        println "\nDependency Exclusion Analysis:"
+        println "============================="
+        
+        // Show configuration
+        println "\nExclusion Configuration:"
+        println "----------------------"
+        if (excludeFromWar.groups) {
+            println "Excluded Groups:"
+            excludeFromWar.groups.each { group ->
+                println "  - ${group}"
+            }
+        }
+        
+        if (excludeFromWar.modules) {
+            println "\nExcluded Modules:"
+            excludeFromWar.modules.each { module ->
+                println "  - ${module}"
+            }
+        }
+        
+        if (includeInWar) {
+            println "\nForce Included Modules:"
+            includeInWar.each { include ->
+                println "  + ${include}"
+            }
+        }
+        
+        // Show transitive exclusions
+        println "\nTransitive Dependencies Analysis:"
+        println "------------------------------"
+        def transitivesByGroup = allTransitives.groupBy { it.group }
+        
+        transitivesByGroup.each { group, transitives ->
+            println "\nGroup: ${group}"
+            transitives.unique { it.name }.each { transitive ->
+                def status = includeInWar.any { include -> transitive.name.contains(include) } ? 
+                    "FORCE INCLUDED" : "EXCLUDED"
+                println "  - ${transitive.name}:${transitive.version} [${status}]"
+            }
+        }
+        
+        // Summary
+        println "\nSummary:"
+        println "--------"
+        println "Total excluded groups: ${excludeFromWar.groups.size()}"
+        println "Total excluded modules: ${excludeFromWar.modules.size()}"
+        println "Total force included modules: ${includeInWar.size()}"
+        println "Total transitive dependencies affected: ${allTransitives.unique { it.group + ':' + it.name }.size()}"
+    }
+}
