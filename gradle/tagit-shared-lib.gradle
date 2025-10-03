@@ -128,9 +128,28 @@ def filterClasspath = { classpath ->
 }
 
 if (null != System.properties['sharedlibs'] && project.tasks.findByName('bootWar')) {
-    bootWar {
-        enabled = true
-        
+
+    task generateSharedLibContextXml {
+        def contextFile = file("$buildDir/generated-resources/context.xml")
+        outputs.file contextFile
+
+        doLast {
+            contextFile.text = """<Context failOnError="false">
+   <Resources failIfMissing="false">
+      <PreResources className="org.apache.catalina.webresources.DirResourceSet" base="\${catalina.base}/webapps/mxsharedlib/WEB-INF/lib" webAppMount="/WEB-INF/lib" readOnly="true"/>
+   </Resources>
+</Context>"""
+        }
+    }
+
+    tasks.named('bootWar') {
+        dependsOn(generateSharedLibContextXml)
+        // Copy the generated FILE into META-INF/context.xml
+        from("$buildDir/generated-resources") {
+            include "context.xml"
+            into "META-INF"
+        }
+
         doFirst {
             classpath = filterClasspath(classpath)
             
