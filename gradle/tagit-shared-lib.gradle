@@ -150,6 +150,10 @@ if (null != System.properties['sharedlibs'] && project.tasks.findByName('bootWar
             into "META-INF"
         }
 
+        // [rj.added 2025.10.07] since WARs are always deployed on top of an external tomcat, stop bootWar from adding WEB-INF/lib-provided at all
+        providedClasspath = files()
+        exclude 'WEB-INF/lib-provided/**'
+
         doFirst {
             classpath = filterClasspath(classpath)
             
@@ -158,8 +162,6 @@ if (null != System.properties['sharedlibs'] && project.tasks.findByName('bootWar
                 project.trace("  + ${file.name}")
             }
         }
-
-        exclude 'WEB-INF/lib-provided/**'
     }
 }
 
