@@ -35,7 +35,7 @@ war {
 
 // To avoid the executable archive and the normal archive from being written to the same location, one or the other should be configured to use a different location. One way to do so is by configuring a classifier:
 bootJar {
-	enabled = true
+	enabled = false // [rj.updated 2025.10.07] 99% of the time, only WAR is used. For cases that bootJar is required, each project will enable on case to case basis using tasks.named("bootJar") { enabled = true }
 	archiveClassifier = 'boot'
 	
 	// [rj.commented 2021.10.18] Conflicts with bootBuildImage: not compatible with buildpacks; ensure jar file is valid and launch script is not enabled
