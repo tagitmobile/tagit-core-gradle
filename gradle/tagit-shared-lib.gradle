@@ -158,6 +158,8 @@ if (null != System.properties['sharedlibs'] && project.tasks.findByName('bootWar
                 project.trace("  + ${file.name}")
             }
         }
+
+        exclude 'WEB-INF/lib-provided/**'
     }
 }
 
