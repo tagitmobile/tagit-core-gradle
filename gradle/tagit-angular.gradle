@@ -43,7 +43,7 @@ node {
     nodeModulesDir = file("${project.projectDir}")     
 
     // [rj.added 2025.10.22] https://jira.tagitmobile.com/browse/PRDDEVOPS-4621 use npm ci instead of npm install
-    npmInstallCommand = System.getenv("CI") ? 'ci' : 'install'
+//    npmInstallCommand = System.getenv("CI") ? 'ci' : 'install'
 
     // [rj.added 2025.10.22] fix for Conflicting peer dependency: @angular/animations@18.2.14 for @swimlane/ngx-charts@"22.0.0" with @angular/animations@19.0.5 
     npmInstall.args = ['--legacy-peer-deps']
