@@ -76,9 +76,11 @@ bootWar {
                 xml.text += """path="${normalized}" """
             xml.text += """failOnError="false">"""
 			if (null != System.properties['sharedlibs']) {
-				xml.text += """<Resources failIfMissing="false">
-							       <PreResources className="org.apache.catalina.webresources.DirResourceSet" base="\${catalina.base}/webapps/mxsharedlib/WEB-INF/lib" webAppMount="/WEB-INF/lib" readOnly="true"/>
-							   </Resources>"""
+				xml.text += """
+  <Resources failIfMissing="false">
+    <PreResources className="org.apache.catalina.webresources.DirResourceSet" base="\${catalina.base}/webapps/mxsharedlib/WEB-INF/lib" webAppMount="/WEB-INF/lib" readOnly="true"/>
+  </Resources>
+"""
 			}
 			xml.text += """</Context>"""
 
