@@ -59,7 +59,7 @@ bootWar {
     // read optional project property
     def raw = (project.findProperty("contextPath") ?: "").toString().trim()
 
-    if (!raw.isEmpty()) {
+    if (!raw.isEmpty() || null != System.properties['sharedlibs']) {
         // normalize:
         // - "/" means ROOT context (path="")
         // - otherwise ensure it starts with "/"
@@ -71,9 +71,21 @@ bootWar {
 
             // Write META-INF/context.xml
             def xml = new File(genDir, "context.xml")
-            xml.text = """<Context path="${normalized}"/>"""
+            xml.text = """<Context """
+			if (!raw.isEmpty())
+                xml.text += """path="${normalized}" """
+            xml.text += """failOnError="false">"""
+			if (null != System.properties['sharedlibs']) {
+				xml.text += """<Resources failIfMissing="false">
+							       <PreResources className="org.apache.catalina.webresources.DirResourceSet" base="\${catalina.base}/webapps/mxsharedlib/WEB-INF/lib" webAppMount="/WEB-INF/lib" readOnly="true"/>
+							   </Resources>"""
+			}
+			xml.text += """</Context>"""
 
-            logger.lifecycle("Including META-INF/context.xml with path='${normalized == "" ? "(ROOT)" : normalized}'")
+			if (!raw.isEmpty())
+            	logger.lifecycle("Including META-INF/context.xml with path='${normalized == "" ? "(ROOT)" : normalized}'")
+			if (null != System.properties['sharedlibs'])
+            	logger.lifecycle("Including META-INF/context.xml with org.apache.catalina.webresources.DirResourceSet base=\${catalina.base}/webapps/mxsharedlib/WEB-INF/lib")
         }
 
         // Add it to the WAR
