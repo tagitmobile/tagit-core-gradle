@@ -55,6 +55,35 @@ bootJar {
 
 bootWar {
 	enabled = true
+
+    // read optional project property
+    def raw = (project.findProperty("contextPath") ?: "").toString().trim()
+
+    if (!raw.isEmpty()) {
+        // normalize:
+        // - "/" means ROOT context (path="")
+        // - otherwise ensure it starts with "/"
+        String normalized = raw == "/" ? "" : (raw.startsWith("/") ? raw : "/${raw}")
+
+        doFirst {
+            def genDir = file("$buildDir/generated-context/META-INF")
+            genDir.mkdirs()
+
+            // Write META-INF/context.xml
+            def xml = new File(genDir, "context.xml")
+            xml.text = """<Context path="${normalized}"/>"""
+
+            logger.lifecycle("Including META-INF/context.xml with path='${normalized == "" ? "(ROOT)" : normalized}'")
+        }
+
+        // Add it to the WAR
+        from("$buildDir/generated-context") {
+            into ""
+        }
+    } else {
+        logger.lifecycle("No -PcontextPath provided → not adding META-INF/context.xml (Tomcat will use WAR name).")
+    }
+
 	includes = ["WEB-INF/**", "META-INF/**"]
     manifest {
 		attributes("Specification-Title": "${projectName}")
