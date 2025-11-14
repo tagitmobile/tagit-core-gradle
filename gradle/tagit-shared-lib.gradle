@@ -38,7 +38,7 @@ ext {
             'spring-boot-starter-webflux',
 			'spring-integration-mail',
 			'spring-boot-starter-data-redis',
-            'org.quartz-scheduler'
+            'quartz'
             ]
     ]
     
