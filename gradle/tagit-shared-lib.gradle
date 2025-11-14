@@ -38,7 +38,8 @@ ext {
             'spring-boot-starter-webflux',
 			'spring-integration-mail',
 			'spring-boot-starter-data-redis',
-            'quartz'
+            'quartz',
+            'quartz-jobs'
             ]
     ]
     
