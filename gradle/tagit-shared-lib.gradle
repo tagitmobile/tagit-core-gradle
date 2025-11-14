@@ -34,10 +34,7 @@ ext {
             'spring-cloud-starter-openfeign',
             'commons-collections',
             'commons-beanutils',
-            'commons-lang',
-			'spring-boot-starter-webflux',
-			'spring-integration-mail',
-			'spring-boot-starter-data-redis'
+            'commons-lang'
             ]
     ]
     
