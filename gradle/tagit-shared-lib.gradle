@@ -27,6 +27,7 @@ ext {
             'org.springframework.session',      // Spring Session
             'jakarta.el',                       // Jakarta Expression Language
             'jakarta.servlet',                  // Jakarta Servlet
+            'org.glassfish.web',                // Jakarta JSTL
             'jakarta.servlet.jsp.jstl',         // Jakarta JSTL
             'io.projectreactor',                // Reactor
             'org.json',                         // JSON
