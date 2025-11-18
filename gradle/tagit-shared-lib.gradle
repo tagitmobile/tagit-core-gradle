@@ -22,7 +22,16 @@ project.ext.trace = { String message ->
 ext {
     excludeFromWar = [
         groups: [
-//          'com.tagit.commons'
+//          'com.tagit.commons',
+            'org.springframework.security',     // Spring Security
+            'org.springframework.session',      // Spring Session
+            'jakarta.el',                       // Jakarta Expression Language
+            'jakarta.servlet',                  // Jakarta Servlet
+            'jakarta.servlet.jsp.jstl',         // Jakarta JSTL
+            'io.projectreactor',                // Reactor
+            'org.json',                         // JSON
+            'io.github.openfeign',              // Feign
+            'org.springframework.cloud.openfeign' // Spring Cloud OpenFeign
         ],
         modules: [
             'tagit-core',
@@ -39,7 +48,10 @@ ext {
 			'spring-integration-mail',
 			'spring-boot-starter-data-redis',
             'quartz',
-            'quartz-jobs'
+            'quartz-jobs',
+            'commons-pool2',
+            'jedis',
+            'jsr305'
             ]
     ]
     
