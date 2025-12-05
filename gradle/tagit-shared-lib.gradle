@@ -1,8 +1,8 @@
 // Documentation: https://edocs1.tagitmobile.com/confluence/display/PMX70B/7.5.4+Shared+Library+Configuration+for+Tomcat+Server
 if (null != System.properties['sharedlibs']) {
-    println "[tagit-shared-lib] Applying Mobeix v7.5.1 Shared Lib plug-in, configurations and dependencies for Spring Boot application."
+    println "[tagit-shared-lib] Applying Mobeix v7.6 Shared Lib plug-in, configurations and dependencies for Spring Boot application."
 } else {
-    println "[tagit-shared-lib] Skipping Mobeix v7.5.1 Shared Lib plug-in, configurations and dependencies application for Spring Boot application. Pass `-Dsharedlibs` to enable."
+    println "[tagit-shared-lib] Skipping Mobeix v7.6 Shared Lib plug-in, configurations and dependencies application for Spring Boot application. Pass `-Dsharedlibs` to enable."
 }
 
 // Define debug function at project level
