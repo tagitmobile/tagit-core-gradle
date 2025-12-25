@@ -52,7 +52,7 @@ ext {
             'quartz-jobs',
             'commons-pool2',
             'jedis',
-            'jsr305'
+            'jsr305',
 			'tink'
             ]
     ]
