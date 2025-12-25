@@ -53,6 +53,7 @@ ext {
             'commons-pool2',
             'jedis',
             'jsr305'
+			'tink'
             ]
     ]
     
