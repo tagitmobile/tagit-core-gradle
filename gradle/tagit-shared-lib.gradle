@@ -32,7 +32,8 @@ ext {
             'io.projectreactor',                // Reactor
             'org.json',                         // JSON
             'io.github.openfeign',              // Feign
-            'org.springframework.cloud.openfeign' // Spring Cloud OpenFeign
+            'org.springframework.cloud.openfeign', // Spring Cloud OpenFeign
+			'io.netty' //fix: Caused by: java.lang.IllegalArgumentException: 'io.netty.resolver.dns.pipeline' is already in use
         ],
         modules: [
             'tagit-core',
@@ -48,6 +49,12 @@ ext {
             'spring-boot-starter-webflux',
 			'spring-integration-mail',
 			'spring-boot-starter-data-redis',
+			'spring-boot-security',
+            'spring-boot-data-redis',
+            'spring-boot-netty',
+            'spring-boot-session',
+            'spring-boot-batch',
+            'spring-boot-quartz',
             'quartz',
             'quartz-jobs',
             'commons-pool2',
