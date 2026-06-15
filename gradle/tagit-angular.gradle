@@ -67,7 +67,28 @@ npm_run_build {
 //    args = ['--base-href /web/', '--prod']
     outputs.upToDateWhen { false }
 }
+task cleanNpmCache(type: NpmTask) {
+    description = 'Force clear the npm cache before installation'
+    group = 'npm'
+    workingDir = file("${project.projectDir}")
+    
+    doFirst {
+        println "[tagit-angular] Cleaning npm cache..."
+    }
+    
+    args = ['cache', 'clean', '--force']
+    
+    doLast {
+        println "[tagit-angular] npm cache cleaned successfully"
+    }
+    
+    // Ensure this task runs after nodeSetup
+    dependsOn nodeSetup
+}
+
 npm_run_build.dependsOn copyMibLibrary
+npmInstall.dependsOn cleanNpmCache
+copyMibLibrary.dependsOn npmInstall
 
 // pack output of the build into JAR file
 task packageNpmApp(type: Zip) {
