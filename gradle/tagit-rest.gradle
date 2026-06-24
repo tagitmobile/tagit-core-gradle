@@ -1,4 +1,4 @@
-println "[tagit-rest] Applying TagitCore v7.6 Boot WAR plug-ins, configurations and dependencies for Spring Boot applications"
+println "[tagit-rest] Applying TagitCore v7.8 Boot WAR plug-ins, configurations and dependencies for Spring Boot applications"
 
 apply plugin: "war"
 apply plugin: 'org.springframework.boot'
@@ -7,7 +7,7 @@ apply plugin: 'org.springframework.boot'
 ext {
 	// default a tomcat version
 	if (!project.hasProperty("tomcatVersion")) {
-	    tomcatVersion = "10.1.55"
+	    tomcatVersion = "11.0.23"
 	}
 	println "[tagit-rest] Overriding Tomcat Version to ${tomcatVersion}"
 }

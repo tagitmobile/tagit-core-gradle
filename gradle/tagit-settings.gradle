@@ -1,4 +1,4 @@
-println "[tagit-settings] Applying TagitCore v7.6 Settings DSL plug-ins"
+println "[tagit-settings] Applying TagitCore v7.8 Settings DSL plug-ins"
 
 // How to apply Remote Object Cache
 // see https://edocs1.tagitmobile.com/confluence/display/PPDG/Migration+Guide+-+Gradle

@@ -1,4 +1,4 @@
-println "[publications] Applying TagitCore v7.6 plug-ins and configurations for publishing to Tagit Nexus"
+println "[publications] Applying TagitCore v7.8 plug-ins and configurations for publishing to Tagit Nexus"
 
 apply plugin: "maven-publish"
 

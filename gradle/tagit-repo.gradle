@@ -1,4 +1,4 @@
-println "[tagit] Applying common TagitCore v7.6 repositories"
+println "[tagit] Applying common TagitCore v7.8 repositories"
 
 repositories {
   // [rj.added 2024.03.23] added support for cloud instances			

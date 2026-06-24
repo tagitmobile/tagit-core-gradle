@@ -1,4 +1,4 @@
-println "[tagit] Applying common TagitCore v7.6 plug-ins, configurations and dependencies for Java applications or libraries"
+println "[tagit] Applying common TagitCore v7.8 plug-ins, configurations and dependencies for Java applications or libraries"
 
 apply plugin: "eclipse"
 apply plugin: "project-report"
@@ -108,9 +108,10 @@ if (configurations.findByName('runtimeClasspath')) {
   }
 }
 
-// [Parthi.added 2021.12.08] For test project dependency 
+// [Parthi.added 2021.12.08] For test project dependency
+// [rj 2026-06-25] testCompile was removed in Gradle 7 (hard error on Gradle 9) -> testImplementation
 configurations {
-    testArtifacts.extendsFrom testCompile
+    testArtifacts.extendsFrom testImplementation
 }
 
 

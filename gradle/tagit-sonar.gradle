@@ -1,4 +1,4 @@
-println "[tagit-sonar] Applying TagitCore v7.6 Sonar plug-ins, configurations and dependencies for Java applications"
+println "[tagit-sonar] Applying TagitCore v7.8 Sonar plug-ins, configurations and dependencies for Java applications"
 
 def normalizeVersion(String version) {
     if (!version) return ""
