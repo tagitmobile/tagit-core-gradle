@@ -3,6 +3,22 @@ println "[tagit-angular] Applying TagitCore v7.8 WAR and Node JS plug-ins and co
 apply plugin: 'war'
 apply plugin: 'com.github.node-gradle.node'
 
+// [rj.added 2026-07-06] Fail-fast guard: this script requires the node-gradle 7.x node{} DSL (nodeProjectDir,
+// yarn removed, npmInstall.args via tasks.named). node-gradle < 7.x (the old default 2.2.4) uses Gradle APIs
+// removed in Gradle 9 (Project.exec()), so npmSetup fails with a confusing error; and the 7.x-only
+// `nodeProjectDir` used below would throw MissingPropertyException. Detect the 7.x DSL by the presence of the
+// NodeExtension `nodeProjectDir` property. hasProperty(...) is exception-safe (returns a MetaProperty or null),
+// and we only fail on DEFINITIVE old-plugin detection (extension present but no nodeProjectDir) — never on an
+// inconclusive result — so this guard can never break a valid 7.x build.
+def nodeExt = project.extensions.findByName('node')
+if (nodeExt != null && nodeExt.hasProperty('nodeProjectDir') == null) {
+	throw new GradleException(
+		"[tagit-angular] node-gradle plugin >= 7.x is required on the v7.8 (Gradle 9) line, but the applied " +
+		"'com.github.node-gradle.node' plugin does not expose the 7.x node{} DSL (no 'nodeProjectDir'). You are " +
+		"likely on the old default (2.2.4), whose npmSetup uses Project.exec() (removed in Gradle 9) and will " +
+		"fail. Fix: set nodeGradleVersion to >= 7.1.0 for this project (the tagit-core connectors use 7.1.0).")
+}
+
 def getDate() {
     return new Date().format('yyyyMMddHHmmss')
 }
