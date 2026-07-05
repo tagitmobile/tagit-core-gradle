@@ -93,7 +93,7 @@ assemble.dependsOn packageNpmApp
 
 // expose the artifact created by the packaging task
 artifacts {
-    npmResources(packageNpmApp.archivePath) {
+    npmResources(packageNpmApp.archiveFile.get().asFile) {
         builtBy packageNpmApp
         type 'jar'
     }
@@ -104,13 +104,13 @@ clean {
 	delete 'dist'
 //	delete 'package-lock.json'
 //	delete 'yarn.lock'
-    delete packageNpmApp.archivePath
+    delete packageNpmApp.archiveFile.get().asFile
 }
 processResources.dependsOn packageNpmApp
 
 dependencies {
 	// ### Angular Application ###
 	// if (!project.hasProperty("excludeUI")) {
-		runtimeOnly files(packageNpmApp.archivePath)	
+		runtimeOnly files(packageNpmApp.archiveFile.get().asFile)	
 	// }
 }
