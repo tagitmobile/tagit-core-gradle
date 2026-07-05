@@ -34,20 +34,17 @@ node {
     workDir = file("web-build/nodejs")
     // Set the work directory for NPM
 	println "[tagit-angular] NPM work directory: ${project.buildDir}/npm"
-    npmWorkDir = file("web-build/npm")   
-    // Set the work directory for Yarn
-	println "[tagit-angular] Yarn  work directory: ${project.buildDir}/yarn"
-    yarnWorkDir = file("web-build/yarn")
+    npmWorkDir = file("web-build/npm")
 	// Set the work directory where node_modules should be located
 	println "[tagit-angular] Node Modules location: ${project.projectDir}"
-    nodeModulesDir = file("${project.projectDir}")     
+    nodeProjectDir = file("${project.projectDir}")     
 
     // [rj.added 2025.10.22] https://jira.tagitmobile.com/browse/PRDDEVOPS-4621 use npm ci instead of npm install
 //    npmInstallCommand = System.getenv("CI") ? 'ci' : 'install'
 
     // [rj.added 2025.10.22] fix for Conflicting peer dependency: @angular/animations@18.2.14 for @swimlane/ngx-charts@"22.0.0" with @angular/animations@19.0.5 
-    npmInstall.args = ['--legacy-peer-deps']
 }
+tasks.named('npmInstall') { args = ['--legacy-peer-deps'] }
 
 task copyMibLibrary(type: Copy) {
 	description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
