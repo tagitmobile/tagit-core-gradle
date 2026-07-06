@@ -6,6 +6,17 @@ apply plugin: "project-report"
 // apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/spotless/style.gradle"
 apply from: "https://raw.githubusercontent.com/tagitmobile/tagit-core-gradle/${tagitGradleVersion}/gradle/tagit-sonar.gradle"
 
+// [rj.added 2026-07-06] Belt-and-suspenders: enable the JUnit Platform (JUnit 5/6, Jupiter) engine here too.
+// tagit-sonar.gradle (applied above) already calls useJUnitPlatform(), but vendored/local copies of THIS script
+// have drifted in the past and dropped the sonar apply (see tagit-core commit 584f2f7), leaving Gradle to fall
+// back to the JUnit 4 engine and discover ZERO Jupiter tests ("test sources present ... did not discover any
+// tests"). Re-declaring it directly on tagit.gradle is idempotent with sonar and makes Jupiter discovery
+// survive that drift for every consumer. This does NOT set an onlyIf gate — the gate stays owned by
+// tagit-sonar.gradle so the two do not compound (see the mx78 platform-promotions spec, Promotion 3).
+tasks.withType(Test).configureEach {
+	useJUnitPlatform()
+}
+
 repositories {
   // [rj.added 2024.03.23] added support for cloud instances			
 	if (null != System.properties['partner-cloud']) {
