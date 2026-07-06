@@ -20,8 +20,16 @@ tasks.withType(Test).configureEach {
 
     ignoreFailures = true
 
-	// Ensure JUnit Tests does not run by default, but must be included explicitly, i.e. `gradlew test`
-    onlyIf { gradle.startParameter.taskNames.contains('test') }
+	// [rj.changed 2026-07-06] The "one true way" test gate (mx78 Promotion 3, Option A). Tests now run BY
+	// DEFAULT (standard Gradle: `build` depends on `test`) and are skipped ON DEMAND with `-Dskip.tests=true`.
+	// This replaces the previous `taskNames.contains('test')` gate, which silently skipped tests on `gradlew
+	// build` (a green build that validated nothing — how the SF7 dispatch regression shipped). It also removes
+	// the per-consumer INVERTED `test.onlyIf { skip.tests }` gate, which ANDed with the old gate to the
+	// confusing "run only if you both name `test` AND pass -Dskip.tests=true". `skip.tests` now means what its
+	// name says. NOTE: this is the SINGLE gate — do not add a second `onlyIf` in consumer builds (they AND, and
+	// only `setOnlyIf` replaces). Publish steps stay green via `-x test`. See bundle
+	// spec/P3-coherent-test-gate-design-2026-07-06.md.
+    onlyIf { !Boolean.getBoolean('skip.tests') }
 }
 
 if (project.tasks.findByName('jacocoTestReport')) {
