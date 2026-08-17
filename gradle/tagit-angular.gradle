@@ -1,4 +1,4 @@
-println "[tagit-angular] Applying TagitCore v7.6 WAR and Node JS plug-ins and configurations for Angular builds"
+println "[tagit-angular] Applying TagitCore 7.7 WAR and Node JS plug-ins and configurations for Angular builds"
 
 apply plugin: 'war'
 apply plugin: 'com.github.node-gradle.node'
@@ -9,53 +9,34 @@ def getDate() {
 
 // declare a dedicated scope for publishing the packaged JAR
 configurations {
-	npmResources
-//	providedRuntime
-//	compile.exclude module: 'spring-boot-starter-json' // to replace with gson // [rj.added 2018.12.04] removing causes problems with io.springfox and spring-boot-starter-actuator: Error creating bean with name 'objectMapperConfigurer'
+    npmResources
 }
 configurations.default.extendsFrom(configurations.npmResources)
 
-// node for angular [rj.added 2020.01.07]
+// node for angular
 node {
-	// Version of node to use.
-    version = '20.18.2'
+    // Version of node to use.
+    version = '24.15.0'
     // Version of npm to use.
-    npmVersion = '10.8.2'
-    // Version of Yarn to use.
-    // yarnVersion = '1.10.1'    
-    
-	// If true, it will download node using above parameters.
-    // If false, it will try to use globally installed node.    
+    npmVersion = '11.12.1'
+
+    // If true, it will download node using above parameters.
+    // If false, it will try to use globally installed node.
     download = true
 
-    println "[tagit-angular] Node Version: ${version}, NPM version: ${npmVersion}"
-	// Set the work directory for unpacking node
-	println "[tagit-angular] NodeJS work directory: ${project.buildDir}/nodejs"
+    println "[tagit-angular] Node Version: 24.15.0, NPM version: 11.12.1"
+    // Set the work directory for unpacking node
     workDir = file("web-build/nodejs")
     // Set the work directory for NPM
-	println "[tagit-angular] NPM work directory: ${project.buildDir}/npm"
-    npmWorkDir = file("web-build/npm")   
-    // Set the work directory for Yarn
-	println "[tagit-angular] Yarn  work directory: ${project.buildDir}/yarn"
-    yarnWorkDir = file("web-build/yarn")
-	// Set the work directory where node_modules should be located
-	println "[tagit-angular] Node Modules location: ${project.projectDir}"
-    nodeModulesDir = file("${project.projectDir}")     
+    npmWorkDir = file("web-build/npm")
 
-    // [rj.added 2025.10.22] https://jira.tagitmobile.com/browse/PRDDEVOPS-4621 use npm ci instead of npm install
-//    npmInstallCommand = System.getenv("CI") ? 'ci' : 'install'
 
-    // [rj.added 2025.10.22] fix for Conflicting peer dependency: @angular/animations@18.2.14 for @swimlane/ngx-charts@"22.0.0" with @angular/animations@19.0.5 
+    // use npm ci instead of npm install
+    npmInstallCommand = 'ci'
+    println "[tagit-angular] Using 'npm ci'"
+
+    // fix for conflicting peer dependencies
     npmInstall.args = ['--legacy-peer-deps']
-}
-
-task copyMibLibrary(type: Copy) {
-	description 'Copy Mobeix Angular Customer Admin Library into Node Modules'
-    duplicatesStrategy = DuplicatesStrategy.WARN
-	// TODO: Replace with Nexus NPM Dependencies
-	from "lib/"
-	into "node_modules/"  		
-	outputs.upToDateWhen { false }
 }
 
 npm_run_build {
@@ -63,17 +44,13 @@ npm_run_build {
     inputs.files fileTree('src/main/webapp/public')
     inputs.files fileTree('src/main/webapp/src')
     inputs.files fileTree('src/main/webapp/config')
-
     // 'node_modules' appeared not reliable for dependency change detection (the task was rerun without changes)
     // though 'package.json' and 'package-lock.json' should be enough anyway
     inputs.file 'package.json'
     inputs.file 'package-lock.json'
-
     outputs.dir 'web-build'
-//    args = ['--base-href /web/', '--prod']
     outputs.upToDateWhen { false }
 }
-npm_run_build.dependsOn copyMibLibrary
 
 // pack output of the build into JAR file
 task packageNpmApp(type: Zip) {
@@ -83,11 +60,10 @@ task packageNpmApp(type: Zip) {
     archiveExtension = "jar"
     destinationDirectory = file("${project.buildDir}/libs")
     from('web-build/dist') {
-	    // optional path under which output will be visible in Java classpath, e.g. static resources path
-	    into 'static/web'
+        into 'META-INF/resources/web'
     }
-	println "[tagit-angular] Packaged app: ${project.name}-web"
-	outputs.upToDateWhen { false }
+    println "[tagit-angular] Packaged app: ${project.name}-web"
+    outputs.upToDateWhen { false }
 }
 assemble.dependsOn packageNpmApp
 
@@ -100,17 +76,13 @@ artifacts {
 }
 
 clean {
-	description 'Clean up after NPM build'
-	delete 'dist'
-//	delete 'package-lock.json'
-//	delete 'yarn.lock'
+    description 'Clean up after NPM build'
+    delete 'dist'
+    delete 'web-build'
     delete packageNpmApp.archivePath
 }
 processResources.dependsOn packageNpmApp
 
 dependencies {
-	// ### Angular Application ###
-	// if (!project.hasProperty("excludeUI")) {
-		runtimeOnly files(packageNpmApp.archivePath)	
-	// }
+    runtimeOnly files(packageNpmApp.archivePath)
 }
