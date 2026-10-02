@@ -7,7 +7,7 @@ apply plugin: 'org.springframework.boot'
 ext {
 	// default a tomcat version
 	if (!project.hasProperty("tomcatVersion")) {
-	     tomcatVersion = "10.1.59"
+	     tomcatVersion = "10.1.60"
 	}
 	println "[tagit-rest] Overriding Tomcat Version to ${tomcatVersion}"
 }
@@ -18,6 +18,8 @@ configurations.all {
 	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
 	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-el:${tomcatVersion}"
 	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-websocket:${tomcatVersion}"
+	resolutionStrategy.force "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}" // [sridhar.added 2026.10.02] keep jasper aligned with core
+	resolutionStrategy.force "org.apache.tomcat:tomcat-annotations-api:${tomcatVersion}" // [sridhar.added 2026.10.02] keep annotations-api aligned with core
 }
 
 def getDate() {
