@@ -5,57 +5,57 @@ repositories {
 	if (null != System.properties['partner-cloud']) {
 		println "Using partner-cloud public repository maven-public" 
 		maven {
-			url 'https://partner-nexus-cloud.tagitmobile.com/repository/maven-public/'
+			url = 'https://partner-nexus-cloud.tagitmobile.com/repository/maven-public/'
 			credentials {
-			username project.nexusUser
-			password project.nexusPassword
+			username = project.nexusUser
+			password = project.nexusPassword
 			}		
 		} 
 	}
 	else if (null != System.properties['cloud']) {
 		println "Using cloud public repository maven-public" 
 		maven {
-				url 'https://nexus-cloud.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-cloud.tagitmobile.com/repository/maven-public/'
 		}
 	}
 	else if (null != System.properties['labs']) {
 		println "Using cloud-labs public repository maven-public" 
 		maven {
-				url 'https://nexus-cloud-labs.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-cloud-labs.tagitmobile.com/repository/maven-public/'
 		}
 	}
 	else if (null != System.properties['onprem']) {
 		println "Using on-prem public repository maven-public" 
 		maven {
-				url 'https://nexus-onprem.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-onprem.tagitmobile.com/repository/maven-public/'
 		}
 	}	
 	else if (null != System.properties['onprem2']) {
 		println "Using on-prem public repository maven-public" 
 		maven {
-				url 'https://nexus-onprem2.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-onprem2.tagitmobile.com/repository/maven-public/'
 		}
 	}	
 	else if (null != System.properties['poc']) {
 		println "Using POC public repository maven-public" 
 		maven {
-				url 'https://nexus-poc.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-poc.tagitmobile.com/repository/maven-public/'
 		}
 	}	
 	else if (null != System.properties['poc-test']) {
 		println "Using POC public repository maven-public" 
 		maven {
-				url 'https://nexus-poc.tagitmobile.com/repository/test-maven-public/'
+				url = 'https://nexus-poc.tagitmobile.com/repository/test-maven-public/'
 		}
 	}		
 	// [rj.added 2024.06.04] secure nexus repository for services use
 	else if (null != System.properties['services']) {
 		println "Using services public repository maven-public" 
 		maven {
-				url 'https://services-nexus.tagitmobile.com/repository/maven-public/'
+				url = 'https://services-nexus.tagitmobile.com/repository/maven-public/'
 				credentials {
-					username project.nexusUser
-					password project.nexusPassword
+					username = project.nexusUser
+					password = project.nexusPassword
 				}		
 		}
 	}
@@ -63,10 +63,10 @@ repositories {
 	else if (null != System.properties['partner']) {
 		println "Using partner public repository maven-public" 
 		maven {
-				url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
+				url = 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
 				credentials {
-					username project.nexusUser
-					password project.nexusPassword
+					username = project.nexusUser
+					password = project.nexusPassword
 				}		
 		}
 	}
@@ -74,10 +74,10 @@ repositories {
 	else if (null != System.properties['training']) {
 		println "Using partner training public repository maven-public" 
 		maven {
-				url 'https://training-nexus.tagitmobile.com/repository/maven-public/'
+				url = 'https://training-nexus.tagitmobile.com/repository/maven-public/'
 				credentials {
-					username project.nexusUser
-					password project.nexusPassword
+					username = project.nexusUser
+					password = project.nexusPassword
 				}		
 		}
 	}
@@ -85,13 +85,13 @@ repositories {
 	else if (null != System.properties['local']) {
 		println "Using local public repository local-maven-public (maven-public + tagit-maven-public)" 
 	    maven {
-			url 'http://localhost:8081/repository/local-maven-public/'
+			url = 'http://localhost:8081/repository/local-maven-public/'
 			allowInsecureProtocol = true  
 		}	
 	} else {
 		// [rj.added 2020.04.22] pull from Tagit Nexus Maven repository
 		maven {
-				url 'https://nexus.tagitmobile.com/repository/maven-public/'  
+				url = 'https://nexus.tagitmobile.com/repository/maven-public/'  
 		}
 	}
   	mavenCentral()

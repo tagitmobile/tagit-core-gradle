@@ -11,57 +11,57 @@ repositories {
 	if (null != System.properties['partner-cloud']) {
 		println "Using partner-cloud public repository maven-public" 
 		maven {
-			url 'https://partner-nexus-cloud.tagitmobile.com/repository/maven-public/'
+			url = 'https://partner-nexus-cloud.tagitmobile.com/repository/maven-public/'
 			credentials {
-        username findProperty("nexusUser") ?: ""
-        password findProperty("nexusPassword") ?: ""
+        username = findProperty("nexusUser") ?: ""
+        password = findProperty("nexusPassword") ?: ""
 			}		
 		} 
 	}
 	else if (null != System.properties['cloud']) {
 		println "Using cloud public repository maven-public" 
 		maven {
-				url 'https://nexus-cloud.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-cloud.tagitmobile.com/repository/maven-public/'
 		}
 	}
 	else if (null != System.properties['labs']) {
 		println "Using cloud-labs public repository maven-public" 
 		maven {
-				url 'https://nexus-cloud-labs.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-cloud-labs.tagitmobile.com/repository/maven-public/'
 		}
 	}
 	else if (null != System.properties['onprem']) {
 		println "Using on-prem public repository maven-public" 
 		maven {
-				url 'https://nexus-onprem.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-onprem.tagitmobile.com/repository/maven-public/'
 		}
 	}	
 	else if (null != System.properties['onprem2']) {
 		println "Using on-prem public repository maven-public" 
 		maven {
-				url 'https://nexus-onprem2.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-onprem2.tagitmobile.com/repository/maven-public/'
 		}
 	}	
 	else if (null != System.properties['poc']) {
 		println "Using POC public repository maven-public" 
 		maven {
-				url 'https://nexus-poc.tagitmobile.com/repository/maven-public/'
+				url = 'https://nexus-poc.tagitmobile.com/repository/maven-public/'
 		}
 	}	
 	else if (null != System.properties['poc-test']) {
 		println "Using POC public repository maven-public" 
 		maven {
-				url 'https://nexus-poc.tagitmobile.com/repository/test-maven-public/'
+				url = 'https://nexus-poc.tagitmobile.com/repository/test-maven-public/'
 		}
 	}		
 	// [rj.added 2023.06.27] secure nexus repository for partner use
 	else if (null != System.properties['partner']) {
 		println "Using partner public repository maven-public" 
 		maven {
-				url 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
+				url = 'https://partner-nexus.tagitmobile.com/repository/maven-public/'
 				credentials {
-          username findProperty("nexusUser") ?: ""
-          password findProperty("nexusPassword") ?: ""
+          username = findProperty("nexusUser") ?: ""
+          password = findProperty("nexusPassword") ?: ""
 				}			
 		}
 	}
@@ -69,10 +69,10 @@ repositories {
 	else if (null != System.properties['training']) {
 		println "Using partner training public repository maven-public" 
 		maven {
-				url 'https://training-nexus.tagitmobile.com/repository/maven-public/'
+				url = 'https://training-nexus.tagitmobile.com/repository/maven-public/'
 				credentials {
-          username findProperty("nexusUser") ?: ""
-          password findProperty("nexusPassword") ?: ""
+          username = findProperty("nexusUser") ?: ""
+          password = findProperty("nexusPassword") ?: ""
 				}		
 		}
 	}
@@ -80,13 +80,13 @@ repositories {
 	else if (null != System.properties['local']) {
 		println "Using local public repository local-maven-public (maven-public + tagit-maven-public)" 
 	    maven {
-			url 'http://localhost:8081/repository/local-maven-public/'
+			url = 'http://localhost:8081/repository/local-maven-public/'
 			allowInsecureProtocol = true  
 		}	
 	} else {
 		// [rj.added 2020.04.22] pull from Tagit Nexus Maven repository
 		maven {
-				url 'https://nexus.tagitmobile.com/repository/maven-public/'  
+				url = 'https://nexus.tagitmobile.com/repository/maven-public/'  
 		}
 	}
   	mavenCentral()
@@ -134,7 +134,7 @@ if (project.tasks.findByName('javadoc')) {
 
   // [rj.added 2020.04.19] tagit-cores-x.y.z-javadoc.jar
   task javadocJar(type: Jar, dependsOn: javadoc) {
-      description 'Packages javadoc output into a single sources JAR for publishing purposes'
+      description = 'Packages javadoc output into a single sources JAR for publishing purposes'
       archiveClassifier = 'javadoc'
       from javadoc.destinationDir
   }  
@@ -142,7 +142,7 @@ if (project.tasks.findByName('javadoc')) {
 
 // [rj.added 2020.04.19] tagit-cores-x.y.z-sources.jar
 task sourcesJar(type: Jar, dependsOn: classes) {
-    description 'Packages all sources into a single sources JAR for source code publishing and debugging purposes'
+    description = 'Packages all sources into a single sources JAR for source code publishing and debugging purposes'
     duplicatesStrategy = 'include'
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
@@ -155,18 +155,23 @@ task testJar(type: Jar, dependsOn: testClasses) {
     from sourceSets.test.output
 }
 
-artifacts {
-    archives sourcesJar
+// Gradle 9 deprecates declaring artifacts in the 'archives' configuration (error in Gradle 10):
+// build the extra jars through 'assemble' instead. Publishing is unaffected (publications.gradle adds them explicitly).
+tasks.named('assemble') {
+    dependsOn sourcesJar
     if (project.tasks.findByName('javadoc')) {
-      archives javadocJar
+      dependsOn javadocJar
     }
-    testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency 
+}
+
+artifacts {
+    testArtifacts testJar // [Parthi.added 2021.12.08] For test project dependency
 }
 
 
 //[Parthi. added 06-05-2022 for deleting deply folder]
 task cleanDeploy(type:Delete) {
-	description 'Cleaning up deploy folder'
+	description = 'Cleaning up deploy folder'
 	delete "deploy"	  
 }
 cleanDeploy.dependsOn clean

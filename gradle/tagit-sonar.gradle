@@ -28,7 +28,7 @@ if (project.tasks.findByName('jacocoTestReport')) {
     println "[jacoco] Jacoco plugin found. Performing Jacoco auto-configuration."
 
     jacoco {
-        toolVersion = "0.8.13"
+        toolVersion = "0.8.14" // 0.8.14+ required for Java 25 class files
         // reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir') // use defaults
     }
 
