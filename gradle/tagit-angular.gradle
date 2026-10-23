@@ -69,7 +69,7 @@ assemble.dependsOn packageNpmApp
 
 // expose the artifact created by the packaging task
 artifacts {
-    npmResources(packageNpmApp.archivePath) {
+    npmResources(packageNpmApp.archiveFile) {
         builtBy packageNpmApp
         type 'jar'
     }
@@ -79,10 +79,10 @@ clean {
     description = 'Clean up after NPM build'
     delete 'dist'
     delete 'web-build'
-    delete packageNpmApp.archivePath
+    delete packageNpmApp.archiveFile
 }
 processResources.dependsOn packageNpmApp
 
 dependencies {
-    runtimeOnly files(packageNpmApp.archivePath)
+    runtimeOnly files(packageNpmApp.archiveFile)
 }
