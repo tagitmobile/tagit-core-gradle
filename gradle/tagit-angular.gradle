@@ -16,15 +16,15 @@ configurations.default.extendsFrom(configurations.npmResources)
 // node for angular
 node {
     // Version of node to use.
-    version = '24.15.0'
+    version = '24.22.1'
     // Version of npm to use.
-    npmVersion = '11.12.1'
+    npmVersion = '11.19.1'
 
     // If true, it will download node using above parameters.
     // If false, it will try to use globally installed node.
     download = true
 
-    println "[tagit-angular] Node Version: 24.15.0, NPM version: 11.12.1"
+    println "[tagit-angular] Node Version: 24.22.1, NPM version: 11.19.1"
     // Set the work directory for unpacking node
     workDir = file("web-build/nodejs")
     // Set the work directory for NPM
